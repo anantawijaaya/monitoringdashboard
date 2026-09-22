@@ -276,13 +276,20 @@ class RegionalMapController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls,csv,txt|max:51200', // 50MB max
-            'import_mode' => 'required|in:replace,append',
+            'file' => 'required|file|mimes:xlsx,xls,csv,txt,zip|max:51200', // 50MB max
+            'import_mode' => 'nullable|in:replace,append',
+        ], [
+            'file.required' => 'Silakan pilih berkas Excel atau CSV terlebih dahulu.',
+            'file.file' => 'Unggahan harus berupa berkas yang valid.',
+            'file.mimes' => 'Format berkas harus berupa .xlsx, .xls, atau .csv.',
+            'file.max' => 'Ukuran berkas tidak boleh melebihi 50MB.',
         ]);
+
+        $mode = $request->input('import_mode', 'replace');
 
         try {
             $service = new RegionalOutletImportService();
-            $result = $service->importFile($request->file('file'), $request->input('import_mode'));
+            $result = $service->importFile($request->file('file'), $mode);
 
             return redirect()->route('regional-map.index')->with('success', "Import berhasil! {$result['inserted']} ditambahkan, {$result['updated']} diperbarui dari total {$result['total_processed']} baris.");
         } catch (\Exception $e) {

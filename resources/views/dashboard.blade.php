@@ -131,7 +131,7 @@
 <body class="h-full flex flex-col antialiased text-gray-900 bg-[#F8FAFC]">
 
     <!-- TOP HEADER BAR (#121212) -->
-    <header class="bg-[#121212] border-b border-gray-800/80 text-white h-16 px-4 sm:px-6 flex items-center justify-between shrink-0 relative z-30 select-none">
+    <header class="bg-[#121212] border-b border-gray-800/80 text-white h-16 px-4 sm:px-6 flex items-center justify-between shrink-0 relative z-[100] select-none">
         <!-- Left: Logo PNG & Regional Title -->
         <div class="flex items-center gap-3">
             <img src="{{ asset('images/logo-balinusra.png') }}" alt="Bali Nusra Logo" class="h-10 sm:h-11 w-auto object-contain">
@@ -220,23 +220,56 @@
 
                     <!-- Filter Form -->
                     <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
-                        <form method="GET" action="{{ route('dashboard') }}" class="flex items-center gap-2.5">
-                            <div class="relative">
-                                <select name="cluster" onchange="this.form.submit()" class="text-xs font-medium bg-white text-gray-700 border border-gray-200 rounded-2xl px-3.5 py-2.5 pr-8 focus:outline-none focus:ring-2 focus:ring-red-500 shadow-sm cursor-pointer">
-                                    <option value="all" {{ $selectedCluster == 'all' ? 'selected' : '' }}>Semua Cluster</option>
+                        <form method="GET" action="{{ route('dashboard') }}" class="flex items-center gap-2.5" id="dashboardFilterForm">
+                            <input type="hidden" name="cluster" id="dashClusterInput" value="{{ $selectedCluster }}">
+                            <input type="hidden" name="period" id="dashPeriodInput" value="{{ $selectedPeriod }}">
+
+                            <!-- Custom Cluster Dropdown -->
+                            <div class="relative z-30" id="dashClusterDropdownContainer">
+                                <button type="button" 
+                                        onclick="toggleDashClusterMenu(event)"
+                                        class="flex items-center justify-between gap-2.5 bg-white border border-gray-200 hover:bg-slate-50 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500/20 shadow-sm cursor-pointer min-w-[150px]">
+                                    <span>{{ $selectedCluster === 'all' ? 'Semua Cluster' : $selectedCluster }}</span>
+                                    <i id="dashClusterArrow" class="bi bi-chevron-down text-gray-400 text-xs transition-transform duration-200"></i>
+                                </button>
+
+                                <div id="dashClusterMenu" 
+                                     class="hidden absolute top-full left-0 mt-1.5 w-52 bg-white border border-gray-200 rounded-2xl shadow-xl py-1.5 z-50 max-h-60 overflow-y-auto">
+                                    <a href="javascript:void(0)" onclick="submitDashFilter('cluster', 'all')"
+                                       class="block px-4 py-2 text-xs font-bold {{ $selectedCluster === 'all' ? 'text-red-600 bg-red-50/50 font-extrabold' : 'text-gray-700 hover:bg-slate-50' }} transition-colors">
+                                        Semua Cluster
+                                    </a>
                                     @foreach($availableClusters as $c)
-                                        <option value="{{ $c }}" {{ $selectedCluster == $c ? 'selected' : '' }}>{{ $c }}</option>
+                                        <a href="javascript:void(0)" onclick="submitDashFilter('cluster', '{{ $c }}')"
+                                           class="block px-4 py-2 text-xs font-semibold {{ $selectedCluster === $c ? 'text-red-600 bg-red-50/50 font-extrabold' : 'text-gray-700 hover:bg-slate-50' }} transition-colors">
+                                            {{ $c }}
+                                        </a>
                                     @endforeach
-                                </select>
+                                </div>
                             </div>
 
-                            <div class="relative">
-                                <select name="period" onchange="this.form.submit()" class="text-xs font-medium bg-white text-gray-700 border border-gray-200 rounded-2xl px-3.5 py-2.5 pr-8 focus:outline-none focus:ring-2 focus:ring-red-500 shadow-sm cursor-pointer">
-                                    <option value="all" {{ $selectedPeriod == 'all' ? 'selected' : '' }}>Semua Periode</option>
+                            <!-- Custom Period Dropdown -->
+                            <div class="relative z-30" id="dashPeriodDropdownContainer">
+                                <button type="button" 
+                                        onclick="toggleDashPeriodMenu(event)"
+                                        class="flex items-center justify-between gap-2.5 bg-white border border-gray-200 hover:bg-slate-50 rounded-2xl px-3.5 py-2.5 text-xs font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500/20 shadow-sm cursor-pointer min-w-[150px]">
+                                    <span>{{ $selectedPeriod === 'all' ? 'Semua Periode' : 'Periode ' . $selectedPeriod }}</span>
+                                    <i id="dashPeriodArrow" class="bi bi-chevron-down text-gray-400 text-xs transition-transform duration-200"></i>
+                                </button>
+
+                                <div id="dashPeriodMenu" 
+                                     class="hidden absolute top-full left-0 mt-1.5 w-52 bg-white border border-gray-200 rounded-2xl shadow-xl py-1.5 z-50 max-h-60 overflow-y-auto">
+                                    <a href="javascript:void(0)" onclick="submitDashFilter('period', 'all')"
+                                       class="block px-4 py-2 text-xs font-bold {{ $selectedPeriod === 'all' ? 'text-red-600 bg-red-50/50 font-extrabold' : 'text-gray-700 hover:bg-slate-50' }} transition-colors">
+                                        Semua Periode
+                                    </a>
                                     @foreach($availablePeriods as $p)
-                                        <option value="{{ $p }}" {{ $selectedPeriod == $p ? 'selected' : '' }}>{{ $p }}</option>
+                                        <a href="javascript:void(0)" onclick="submitDashFilter('period', '{{ $p }}')"
+                                           class="block px-4 py-2 text-xs font-semibold {{ $selectedPeriod == $p ? 'text-red-600 bg-red-50/50 font-extrabold' : 'text-gray-700 hover:bg-slate-50' }} transition-colors">
+                                            Periode {{ $p }}
+                                        </a>
                                     @endforeach
-                                </select>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -423,10 +456,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                    Leaderboard
-                                </span>
+                                
                             </div>
 
                             <!-- List of Top 3 Items -->
@@ -505,10 +535,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-50 text-red-600 border border-red-200">
-                                    <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                                    Perlu Evaluasi
-                                </span>
+                            
                             </div>
 
                             <!-- List of Bottom 3 Items -->
@@ -575,11 +602,8 @@
 
                 <!-- LINE CHART SECTION: GRAFIK PERBANDINGAN BULAN SEBELUMNYA & BULAN SEKARANG -->
                 <div class="bg-white rounded-3xl p-5 sm:p-6 border border-gray-100 shadow-card">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4 border-b border-gray-100">
-                        <div class="flex items-center gap-3">
-                            <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shrink-0 shadow-sm">
-                                <i class="bi bi-bar-chart-line-fill"></i>
-                            </div>
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between border-b border-gray-100">
+                        <div class="flex items-center gap-1">
                             <div>
                                 <h3 class="text-sm sm:text-base font-black text-gray-900 uppercase tracking-tight">GRAFIK PERBANDINGAN PENDAPATAN CLUSTER</h3>
                             </div>
@@ -614,13 +638,114 @@
                     </div>
                 </div>
 
+                <!-- SECTION: SUMMARY PENYERAPAN BUDGET REALISASI PER CLUSTER -->
+                <div class="bg-white rounded-3xl p-5 sm:p-6 border border-gray-100 shadow-card space-y-2">
+                    <!-- Header Section -->
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4 border-b border-gray-100">
+                        <div class="flex items-center gap-2">
+                            
+                            <div>
+                                <h3 class="text-sm sm:text-base font-black text-gray-900 uppercase tracking-tight">SUMMARY PENYERAPAN BUDGET MARKETING PER CLUSTER</h3>
+                                <p class="text-xs text-gray-500 mt-0.5"></p>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    <!-- Summary Table Container -->
+                    <div class="overflow-x-auto rounded-2xl border border-gray-100 shadow-sm">
+                        <table class="w-full text-left text-xs border-collapse">
+
+                            <thead>
+                                <tr class="bg-[#ED1C24] text-white font-extrabold uppercase text-[13px] tracking-wider">
+                                    <th class="py-2.5 px-3 text-center w-1 whitespace-nowrap border-b border-slate-800">No</th>
+                                    <th class="py-2.5 px-3 border-b border-slate-800 text-center w-1 whitespace-nowrap">Cluster</th>
+                                    <th class="py-2.5 px-3 border-b border-slate-800 text-center w-1 whitespace-nowrap">Mitra</th>
+                                    <th class="py-2.5 px-3 border-b border-slate-800 text-center w-64">Indirect Channel</th>
+                                    <th class="py-2.5 px-3 border-b border-slate-800 text-center w-64">Direct Sales</th>
+                                    <th class="py-2.5 px-3 border-b border-slate-800 text-center w-64">Culture Program</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 bg-white">
+                                @forelse($realizationSummary as $index => $row)
+                                    <tr class="hover:bg-slate-50/80 transition-colors font-medium text-gray-800">
+                                        <!-- No -->
+                                        <td class="py-2 px-3 text-center font-semidbold text-gray-800 whitespace-nowrap">
+                                            {{ $index + 1 }}
+                                        </td>
+                                        
+                                        <!-- Cluster -->
+                                        <td class="py-2 px-3 font-semibold text-gray-800 whitespace-nowrap">
+                                            {{ $row['cluster'] }}
+                                        </td>
+
+                                        <!-- Mitra -->
+                                        <td class="py-2 px-3 font-semibold text-gray-800 whitespace-nowrap">
+                                            {{ $row['mitra'] }}
+                                        </td>
+
+                                        <!-- Indirect Channel -->
+                                        <td class="py-2 px-3 whitespace-nowrap">
+                                            <div class="space-y-1 min-w-[170px]">
+                                                <div class="flex items-center justify-between text-xs gap-3">
+                                                    <span class="text-[14px] font-semibold text-gray-700">Rp {{ number_format($row['indirect_channel']['realisasi'], 0, ',', '.') }}</span>
+                                                    <span class="font-extrabold text-black-800 bg-black-50 px-1.5 py-0.5 rounded text-[14px]">{{ $row['indirect_channel']['persen'] }}%</span>
+                                                </div>
+                                                <div class="w-full h-1.5 bg-gray-100 overflow-hidden">
+                                                    <div class="h-full bg-red-500 transition-all duration-500" style="width: {{ min(100, $row['indirect_channel']['persen']) }}%;"></div>
+                                                </div>
+                                                <span class="text-[11px] text-gray-400 block">Rp {{ number_format($row['indirect_channel']['budget'], 0, ',', '.') }}</span>
+                                            </div>
+                                        </td>
+
+                                        <!-- Direct Sales -->
+                                        <td class="py-2 px-3 whitespace-nowrap">
+                                            <div class="space-y-1 min-w-[170px]">
+                                                <div class="flex items-center justify-between text-xs gap-3">
+                                                    <span class="text-[14px] font-semibold text-gray-700">Rp {{ number_format($row['direct_sales']['realisasi'], 0, ',', '.') }}</span>
+                                                    <span class="font-bold text-black-600 bg-blue-50 px-1.5 py-0.5 rounded text-[14px]">{{ $row['direct_sales']['persen'] }}%</span>
+                                                </div>
+                                                <div class="w-full h-1.5 bg-gray-100 overflow-hidden">
+                                                    <div class="h-full bg-red-500 transition-all duration-500" style="width: {{ min(100, $row['direct_sales']['persen']) }}%;"></div>
+                                                </div>
+                                                <span class="text-[11px] text-gray-400 block">Rp {{ number_format($row['direct_sales']['budget'], 0, ',', '.') }}</span>
+                                            </div>
+                                        </td>
+
+                                        <!-- Culture Program -->
+                                        <td class="py-2 px-3 whitespace-nowrap">
+                                            <div class="space-y-1 min-w-[170px]">
+                                                <div class="flex items-center justify-between text-xs gap-3">
+                                                    <span class="text-[14px] font-semibold text-gray-700">Rp {{ number_format($row['culture_program']['realisasi'], 0, ',', '.') }}</span>
+                                                    <span class="font-bold text-black-600 bg-black-50 px-1.5 py-0.5 rounded text-[14px]">{{ $row['culture_program']['persen'] }}%</span>
+                                                </div>
+                                                <div class="w-full h-1.5 bg-gray-100 overflow-hidden">
+                                                    <div class="h-full bg-red-500 transition-all duration-500" style="width: {{ min(100, $row['culture_program']['persen']) }}%;"></div>
+                                                </div>
+                                                <span class="text-[11px] text-gray-400 block">Rp {{ number_format($row['culture_program']['budget'], 0, ',', '.') }}</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="py-8 text-center text-gray-400 bg-gray-50">
+                                            <i class="bi bi-inbox text-3xl block mb-1"></i>
+                                            <p class="text-xs font-semibold">Belum ada data realisasi penyerapan budget.</p>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </main>
 
     </div>
 
     <!-- BOTTOM FOOTER BAR -->
-    <footer id="dashboardFooter" class="w-full h-8 bg-[#121212] text-gray-400 px-6 flex items-center justify-between text-[11px] font-medium shrink-0 border-t border-gray-800 select-none hidden opacity-0 transition-all duration-300 pointer-events-none">
+    <footer id="dashboardFooter" class="fixed bottom-0 left-0 right-0 z-40 h-8 bg-[#121212] text-gray-400 px-6 flex items-center justify-between text-[11px] font-medium border-t border-gray-800 select-none transition-all duration-300 transform translate-y-full opacity-0 pointer-events-none">
         <span>© {{ date('Y') }} Telkomsel. All Rights Reserved.</span>
         <span class="hidden sm:inline">Monitoring Dashboard Regional Bali Nusra</span>
     </footer>
@@ -894,6 +1019,27 @@
 
             <form action="{{ route('revenue.import') }}" method="POST" enctype="multipart/form-data" class="mt-5 space-y-4" id="formRevenueImport" onsubmit="handleImportSubmit(event)">
                 @csrf
+
+                <!-- Mode Import Options -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5">Mode Import Data:</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <label class="flex items-start gap-2 p-2.5 rounded-xl border border-gray-200 bg-slate-50 hover:bg-slate-100 cursor-pointer transition-colors">
+                            <input type="radio" name="import_mode" value="replace" checked class="mt-0.5 text-red-600 focus:ring-red-500">
+                            <div>
+                                <span class="font-bold text-gray-800 block text-xs leading-tight">Ganti Data (Replace)</span>
+                                <span class="text-[10px] text-gray-500 block">Hapus data lama, gantikan penuh dengan file baru.</span>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-2 p-2.5 rounded-xl border border-gray-200 bg-slate-50 hover:bg-slate-100 cursor-pointer transition-colors">
+                            <input type="radio" name="import_mode" value="append" class="mt-0.5 text-red-600 focus:ring-red-500">
+                            <div>
+                                <span class="font-bold text-gray-800 block text-xs leading-tight">Tambah / Update (Update)</span>
+                                <span class="text-[10px] text-gray-500 block">Perbarui data yang cocok, tambahkan data baru.</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
 
                 <!-- File Input Drop Zone -->
                 <div class="border-2 border-dashed border-gray-200 rounded-2xl p-6 text-center hover:border-red-400 transition-colors bg-gray-50/50">
@@ -1406,7 +1552,13 @@
                     scales: {
                         x: {
                             grid: { display: false, drawBorder: false },
-                            ticks: { font: { family: 'Plus Jakarta Sans', size: 11, weight: '700' }, color: '#334155' }
+                            ticks: {
+                                font: { family: 'Plus Jakarta Sans', size: 8.5, weight: '700' },
+                                color: '#334155',
+                                autoSkip: false,
+                                maxRotation: 0,
+                                minRotation: 0
+                            }
                         },
                         y: {
                             grid: { color: '#F1F5F9', drawBorder: false },
@@ -1452,38 +1604,6 @@
             }
         }
 
-        function toggleSidebar() {
-            const sidebar = document.getElementById('mainSidebar');
-            const toggleIcon = document.getElementById('sidebarToggleIcon');
-            const toggleBtn = document.getElementById('sidebarToggleBtn');
-            const headerIcon = document.getElementById('headerSidebarToggleIcon');
-            if (!sidebar) return;
-
-            const isCollapsed = sidebar.classList.contains('-ml-60') || document.documentElement.classList.contains('sidebar-is-collapsed');
-            if (isCollapsed) {
-                sidebar.classList.remove('-ml-60');
-                document.documentElement.classList.remove('sidebar-is-collapsed');
-                if (toggleIcon) toggleIcon.className = 'bi bi-chevron-left text-xs transition-transform duration-300';
-                if (toggleBtn) toggleBtn.title = 'Sembunyikan Sidebar';
-                if (headerIcon) headerIcon.className = 'bi bi-layout-sidebar-inset text-lg';
-                localStorage.setItem('sidebarCollapsed', 'false');
-            } else {
-                sidebar.classList.add('-ml-60');
-                document.documentElement.classList.add('sidebar-is-collapsed');
-                if (toggleIcon) toggleIcon.className = 'bi bi-chevron-right text-xs transition-transform duration-300';
-                if (toggleBtn) toggleBtn.title = 'Tampilkan Sidebar';
-                if (headerIcon) headerIcon.className = 'bi bi-layout-sidebar text-lg';
-                localStorage.setItem('sidebarCollapsed', 'true');
-            }
-
-            // Invalidate Chart size after animation if Chart is present
-            setTimeout(() => {
-                if (typeof growthChart !== 'undefined' && growthChart) {
-                    growthChart.resize();
-                }
-            }, 320);
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
             initChart();
             const isOpened = localStorage.getItem('sidebarKpiSbpOpen');
@@ -1509,26 +1629,75 @@
             }
         });
 
-        // Alur Logika Sistem: Footer HANYA muncul saat scrolling menyentuh bagian paling bawah
+        // Alur Logika Sistem: Footer HANYA muncul saat scrolling menyentuh bagian paling bawah (Fixed Position, Bebas Crash)
         document.addEventListener('DOMContentLoaded', () => {
             const mainCanvas = document.querySelector('main');
             const dashboardFooter = document.getElementById('dashboardFooter');
 
             if (mainCanvas && dashboardFooter) {
                 const checkFooterVisibility = () => {
-                    const isAtBottom = (mainCanvas.scrollTop + mainCanvas.clientHeight) >= (mainCanvas.scrollHeight - 15);
+                    const isAtBottom = (mainCanvas.scrollTop + mainCanvas.clientHeight) >= (mainCanvas.scrollHeight - 25);
                     if (isAtBottom) {
-                        dashboardFooter.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
-                        dashboardFooter.classList.add('opacity-100', 'pointer-events-auto');
+                        dashboardFooter.classList.remove('translate-y-full', 'opacity-0', 'pointer-events-none');
+                        dashboardFooter.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
                     } else {
-                        dashboardFooter.classList.remove('opacity-100', 'pointer-events-auto');
-                        dashboardFooter.classList.add('hidden', 'opacity-0', 'pointer-events-none');
+                        dashboardFooter.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+                        dashboardFooter.classList.add('translate-y-full', 'opacity-0', 'pointer-events-none');
                     }
                 };
 
                 checkFooterVisibility();
                 mainCanvas.addEventListener('scroll', checkFooterVisibility, { passive: true });
                 window.addEventListener('resize', checkFooterVisibility, { passive: true });
+            }
+        });
+
+        // Custom Dropdown Toggle Logic for Dashboard Filters
+        function submitDashFilter(type, val) {
+            if (type === 'cluster') document.getElementById('dashClusterInput').value = val;
+            if (type === 'period') document.getElementById('dashPeriodInput').value = val;
+            document.getElementById('dashboardFilterForm').submit();
+        }
+
+        function toggleDashClusterMenu(event) {
+            event.stopPropagation();
+            const menu = document.getElementById('dashClusterMenu');
+            const arrow = document.getElementById('dashClusterArrow');
+            const periodMenu = document.getElementById('dashPeriodMenu');
+            if (periodMenu) periodMenu.classList.add('hidden');
+            if (menu) {
+                menu.classList.toggle('hidden');
+                if (arrow) arrow.classList.toggle('rotate-180');
+            }
+        }
+
+        function toggleDashPeriodMenu(event) {
+            event.stopPropagation();
+            const menu = document.getElementById('dashPeriodMenu');
+            const arrow = document.getElementById('dashPeriodArrow');
+            const clusterMenu = document.getElementById('dashClusterMenu');
+            if (clusterMenu) clusterMenu.classList.add('hidden');
+            if (menu) {
+                menu.classList.toggle('hidden');
+                if (arrow) arrow.classList.toggle('rotate-180');
+            }
+        }
+
+        document.addEventListener('click', function(e) {
+            const cContainer = document.getElementById('dashClusterDropdownContainer');
+            const cMenu = document.getElementById('dashClusterMenu');
+            const cArrow = document.getElementById('dashClusterArrow');
+            if (cContainer && !cContainer.contains(e.target) && cMenu && !cMenu.classList.contains('hidden')) {
+                cMenu.classList.add('hidden');
+                if (cArrow) cArrow.classList.remove('rotate-180');
+            }
+
+            const pContainer = document.getElementById('dashPeriodDropdownContainer');
+            const pMenu = document.getElementById('dashPeriodMenu');
+            const pArrow = document.getElementById('dashPeriodArrow');
+            if (pContainer && !pContainer.contains(e.target) && pMenu && !pMenu.classList.contains('hidden')) {
+                pMenu.classList.add('hidden');
+                if (pArrow) pArrow.classList.remove('rotate-180');
             }
         });
     </script>

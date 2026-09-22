@@ -12,6 +12,9 @@ class HierarchyOutletSeeder extends Seeder
      */
     public function run(): void
     {
+        if (\App\Models\HierarchyOutlet::count() > 0) {
+            return;
+        }
         $data = [
             // 1. BALI BARAT (Denpasar Branch - Herbianto) - Soft Greenish Tint
             [

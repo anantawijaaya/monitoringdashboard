@@ -118,19 +118,57 @@
 
 <!-- Shared Sidebar Script -->
 <script>
-    if (typeof window.toggleSidebar !== 'function') {
-        window.toggleSidebar = function() {
-            const sidebar = document.getElementById('mainSidebar');
-            const icon = document.getElementById('sidebarToggleIcon');
-            if (sidebar) {
-                const isCollapsed = sidebar.classList.toggle('-ml-60');
-                localStorage.setItem('sidebarCollapsed', isCollapsed ? 'true' : 'false');
-                if (icon) {
-                    icon.classList.toggle('rotate-180');
-                }
+    function toggleSidebar() {
+        const sidebar = document.getElementById('mainSidebar');
+        const toggleIcon = document.getElementById('sidebarToggleIcon');
+        const toggleBtn = document.getElementById('sidebarToggleBtn');
+        const headerIcon = document.getElementById('headerSidebarToggleIcon');
+        if (!sidebar) return;
+
+        const isCollapsed = sidebar.classList.contains('-ml-60') || document.documentElement.classList.contains('sidebar-is-collapsed');
+
+        if (isCollapsed) {
+            sidebar.classList.remove('-ml-60');
+            document.documentElement.classList.remove('sidebar-is-collapsed');
+            localStorage.setItem('sidebarCollapsed', 'false');
+
+            if (toggleIcon) {
+                toggleIcon.classList.remove('rotate-180');
             }
-        };
+            if (toggleBtn) {
+                toggleBtn.title = 'Sembunyikan Sidebar';
+            }
+            if (headerIcon) {
+                headerIcon.className = 'bi bi-layout-sidebar-inset text-lg';
+            }
+        } else {
+            sidebar.classList.add('-ml-60');
+            document.documentElement.classList.add('sidebar-is-collapsed');
+            localStorage.setItem('sidebarCollapsed', 'true');
+
+            if (toggleIcon) {
+                toggleIcon.classList.add('rotate-180');
+            }
+            if (toggleBtn) {
+                toggleBtn.title = 'Tampilkan Sidebar';
+            }
+            if (headerIcon) {
+                headerIcon.className = 'bi bi-layout-sidebar text-lg';
+            }
+        }
+
+        window.dispatchEvent(new Event('resize'));
+        setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+            if (typeof map !== 'undefined' && map && typeof map.invalidateSize === 'function') {
+                map.invalidateSize();
+            }
+            if (typeof growthChart !== 'undefined' && growthChart && typeof growthChart.resize === 'function') {
+                growthChart.resize();
+            }
+        }, 320);
     }
+    window.toggleSidebar = toggleSidebar;
 
     if (typeof window.toggleKpiSbpMenu !== 'function') {
         window.toggleKpiSbpMenu = function() {
@@ -159,15 +197,24 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        if (localStorage.getItem('sidebarCollapsed') === 'true') {
-            const sidebar = document.getElementById('mainSidebar');
-            const icon = document.getElementById('sidebarToggleIcon');
-            if (sidebar && !sidebar.classList.contains('-ml-60')) {
-                sidebar.classList.add('-ml-60');
-            }
-            if (icon && !icon.classList.contains('rotate-180')) {
-                icon.classList.add('rotate-180');
-            }
+        const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+        const sidebar = document.getElementById('mainSidebar');
+        const icon = document.getElementById('sidebarToggleIcon');
+        const btn = document.getElementById('sidebarToggleBtn');
+        const headerIcon = document.getElementById('headerSidebarToggleIcon');
+
+        if (isCollapsed) {
+            if (sidebar) sidebar.classList.add('-ml-60');
+            document.documentElement.classList.add('sidebar-is-collapsed');
+            if (icon) icon.classList.add('rotate-180');
+            if (btn) btn.title = 'Tampilkan Sidebar';
+            if (headerIcon) headerIcon.className = 'bi bi-layout-sidebar text-lg';
+        } else {
+            if (sidebar) sidebar.classList.remove('-ml-60');
+            document.documentElement.classList.remove('sidebar-is-collapsed');
+            if (icon) icon.classList.remove('rotate-180');
+            if (btn) btn.title = 'Sembunyikan Sidebar';
+            if (headerIcon) headerIcon.className = 'bi bi-layout-sidebar-inset text-lg';
         }
     });
 </script>

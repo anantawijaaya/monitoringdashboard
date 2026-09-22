@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
@@ -19,6 +20,50 @@ class AuthController extends Controller
             return redirect()->route('dashboard');
         }
         return view('auth.login');
+    }
+
+    /**
+     * Redirect the user to the Google authentication page.
+     */
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')
+            ->with(['prompt' => 'select_account'])
+            ->redirect();
+    }
+
+    /**
+     * Obtain the user information from Google.
+     */
+    public function handleGoogleCallback(Request $request)
+    {
+        try {
+            $googleUser = Socialite::driver('google')->user();
+
+            // Find user in database by email
+            $user = User::where('email', $googleUser->getEmail())->first();
+
+            if (!$user) {
+                return redirect()->route('login')->withErrors([
+                    'email' => 'Email Google (' . $googleUser->getEmail() . ') belum terdaftar di sistem. Silakan hubungi administrator.',
+                ]);
+            }
+
+            // Update google_id and avatar if available
+            $user->update([
+                'google_id' => $googleUser->getId(),
+                'avatar' => $googleUser->getAvatar(),
+            ]);
+
+            Auth::login($user, true);
+            $request->session()->regenerate();
+
+            return redirect()->intended(route('dashboard'))->with('success', 'Selamat datang kembali, ' . $user->name . '!');
+        } catch (\Exception $e) {
+            return redirect()->route('login')->withErrors([
+                'email' => 'Gagal melakukan verifikasi Google: ' . $e->getMessage(),
+            ]);
+        }
     }
 
     /**

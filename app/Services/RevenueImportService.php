@@ -13,7 +13,7 @@ class RevenueImportService
     /**
      * Parse and import CSV / Excel file into cluster_revenues table
      */
-    public function importFile(UploadedFile $file): array
+    public function importFile(UploadedFile $file, string $mode = 'replace'): array
     {
         $extension = strtolower($file->getClientOriginalExtension());
         $filePath = $file->getRealPath();
@@ -21,22 +21,22 @@ class RevenueImportService
         // Check if file is HTML table exported with .xls or .xlsx extension
         $fileHead = file_get_contents($filePath, false, null, 0, 2048);
         if (str_contains(strtolower($fileHead), '<table') || str_contains(strtolower($fileHead), '<html') || str_contains(strtolower($fileHead), '<?xml')) {
-            return $this->importHtmlTable($filePath);
+            return $this->importHtmlTable($filePath, $mode);
         }
 
         if (in_array($extension, ['xlsx', 'xlsm'])) {
-            return $this->importXlsx($filePath);
+            return $this->importXlsx($filePath, $mode);
         } elseif (in_array($extension, ['csv', 'txt'])) {
-            return $this->importCsv($filePath);
+            return $this->importCsv($filePath, $mode);
         } else {
             // Fallback strategy: try XLSX -> HTML Table -> CSV
             try {
-                return $this->importXlsx($filePath);
+                return $this->importXlsx($filePath, $mode);
             } catch (Exception $e) {
                 try {
-                    return $this->importHtmlTable($filePath);
+                    return $this->importHtmlTable($filePath, $mode);
                 } catch (Exception $e2) {
-                    return $this->importCsv($filePath);
+                    return $this->importCsv($filePath, $mode);
                 }
             }
         }
@@ -45,7 +45,7 @@ class RevenueImportService
     /**
      * Import Native XLSX via ZipArchive + SimpleXML (Multi-Sheet Support)
      */
-    public function importXlsx(string $filePath): array
+    public function importXlsx(string $filePath, string $mode = 'replace'): array
     {
         if (!class_exists('ZipArchive')) {
             throw new Exception("Ekstensi ZipArchive PHP belum aktif.");
@@ -147,7 +147,7 @@ class RevenueImportService
         $lastException = null;
         foreach ($allSheetRows as $sheetRows) {
             try {
-                return $this->processExtractedRows($sheetRows);
+                return $this->processExtractedRows($sheetRows, $mode);
             } catch (Exception $e) {
                 $lastException = $e;
             }
@@ -159,7 +159,7 @@ class RevenueImportService
     /**
      * Import HTML Table (.xls / .xlsx exported from Web Applications)
      */
-    public function importHtmlTable(string $filePath): array
+    public function importHtmlTable(string $filePath, string $mode = 'replace'): array
     {
         $content = file_get_contents($filePath);
         if ($content === false) {
@@ -194,13 +194,13 @@ class RevenueImportService
             }
         }
 
-        return $this->processExtractedRows($rows);
+        return $this->processExtractedRows($rows, $mode);
     }
 
     /**
      * Import CSV File with auto-delimiter detection across multiple sample lines
      */
-    public function importCsv(string $filePath): array
+    public function importCsv(string $filePath, string $mode = 'replace'): array
     {
         $handle = fopen($filePath, 'r');
         if (!$handle) {
@@ -239,13 +239,13 @@ class RevenueImportService
         }
         fclose($handle);
 
-        return $this->processExtractedRows($rows);
+        return $this->processExtractedRows($rows, $mode);
     }
 
     /**
      * Process Extracted Rows into Database Table: cluster_revenues
      */
-    private function processExtractedRows(array $rows): array
+    private function processExtractedRows(array $rows, string $mode = 'replace'): array
     {
         if (empty($rows)) {
             throw new Exception("Tidak ada baris data yang ditemukan dalam berkas.");
@@ -275,6 +275,10 @@ class RevenueImportService
 
         DB::beginTransaction();
         try {
+            if ($mode === 'replace') {
+                \App\Models\ClusterRevenue::query()->delete();
+            }
+
             for ($i = $startIndex; $i < count($rows); $i++) {
                 $row = $rows[$i];
 
@@ -344,26 +348,49 @@ class RevenueImportService
                 $periodMonth = $data['period_month'] ?: 'Agustus 2026';
                 $periodYear = intval($data['period_year']) ?: 2026;
 
-                // Persist to ClusterRevenue table (revenue_data) with composite key matching (kabupaten + period_month + period_year)
-                $existingRecord = \App\Models\ClusterRevenue::whereRaw('UPPER(TRIM(kabupaten)) = ?', [$normalizedKab])
-                    ->where('period_month', $periodMonth)
-                    ->where('period_year', $periodYear)
-                    ->first();
-
-                if (!$existingRecord && str_starts_with($normalizedKab, 'KOTA ')) {
-                    $stripped = trim(substr($normalizedKab, 5));
-                    $existingRecord = \App\Models\ClusterRevenue::whereRaw('UPPER(TRIM(kabupaten)) = ?', [$stripped])
+                // Persist to ClusterRevenue table (revenue_data)
+                if ($mode === 'replace') {
+                    $existingRecord = \App\Models\ClusterRevenue::whereRaw('UPPER(TRIM(kabupaten)) = ?', [$normalizedKab])
                         ->where('period_month', $periodMonth)
                         ->where('period_year', $periodYear)
                         ->first();
-                }
 
-                if ($existingRecord) {
-                    $existingRecord->update($payload);
-                    $updatedCount++;
+                    if ($existingRecord) {
+                        $existingRecord->update($payload);
+                        $updatedCount++;
+                    } else {
+                        \App\Models\ClusterRevenue::create($payload);
+                        $insertedCount++;
+                    }
                 } else {
-                    \App\Models\ClusterRevenue::create($payload);
-                    $insertedCount++;
+                    $existingRecord = \App\Models\ClusterRevenue::whereRaw('UPPER(TRIM(kabupaten)) = ?', [$normalizedKab])
+                        ->where('period_month', $periodMonth)
+                        ->where('period_year', $periodYear)
+                        ->first();
+
+                    if (!$existingRecord && in_array($normalizedKab, ['KOTA MATARAM', 'KOTA DENPASAR'])) {
+                        $stripped = trim(substr($normalizedKab, 5));
+                        $existingRecord = \App\Models\ClusterRevenue::whereRaw('UPPER(TRIM(kabupaten)) = ?', [$stripped])
+                            ->where('period_month', $periodMonth)
+                            ->where('period_year', $periodYear)
+                            ->first();
+                    }
+
+                    if (!$existingRecord && in_array($normalizedKab, ['MATARAM', 'DENPASAR'])) {
+                        $kotaVersion = 'KOTA ' . $normalizedKab;
+                        $existingRecord = \App\Models\ClusterRevenue::whereRaw('UPPER(TRIM(kabupaten)) = ?', [$kotaVersion])
+                            ->where('period_month', $periodMonth)
+                            ->where('period_year', $periodYear)
+                            ->first();
+                    }
+
+                    if ($existingRecord) {
+                        $existingRecord->update($payload);
+                        $updatedCount++;
+                    } else {
+                        \App\Models\ClusterRevenue::create($payload);
+                        $insertedCount++;
+                    }
                 }
             }
 
@@ -431,7 +458,7 @@ class RevenueImportService
         $matchCount = 0;
         foreach ($row as $cell) {
             $clean = strtolower(trim((string)$cell));
-            if (preg_match('/^(target|mtd|achieved|ach|realisasi|actual|status|notes|keterangan|%)?$/i', $clean)) {
+            if ($clean !== '' && preg_match('/^(target|mtd|achieved|ach|realisasi|actual|status|notes|keterangan|%)%?$/i', $clean)) {
                 $matchCount++;
             }
         }
@@ -636,37 +663,41 @@ class RevenueImportService
      */
     public static function normalizeKabupatenName(string $name): string
     {
-        $val = strtoupper(trim($name));
-        if (empty($val)) return '';
+        if (empty($name)) return '';
 
-        // Standardize Kota Names
-        if (in_array($val, ['MATARAM', 'KOTA MATARAM', 'KOTA MATARAM (NTP)'])) {
-            return 'KOTA MATARAM';
-        }
-        if (in_array($val, ['KOTA BIMA', 'BIMA KOTA'])) {
+        // Replace non-breaking spaces (\xC2\xA0 / &nbsp;) & multiple whitespace with single space
+        $clean = preg_replace('/[\s\x{00a0}]+/u', ' ', $name);
+        $clean = strtoupper(trim($clean));
+        if (empty($clean)) return '';
+
+        // Standardize punctuation like dots, dashes, parentheses
+        $clean = str_replace(['KAB.', 'KABUPATEN', 'KOTA.', 'KOTA '], ['KAB ', 'KABUPATEN ', 'KOTA ', 'KOTA '], $clean);
+        $clean = preg_replace('/[\(\)]/', ' ', $clean);
+        $clean = preg_replace('/\s+/', ' ', $clean);
+        $clean = trim($clean);
+
+        // Match Kota Bima vs Kabupaten Bima variations
+        if (in_array($clean, ['KOTA BIMA', 'BIMA KOTA', 'KOTA BIMA NTP', 'BIMA KOTA NTP'])) {
             return 'KOTA BIMA';
         }
-        if (in_array($val, ['KOTA KUPANG', 'KUPANG KOTA'])) {
-            return 'KOTA KUPANG';
-        }
-        if (in_array($val, ['KOTA DENPASAR', 'DENPASAR', 'DENPASAR KOTA'])) {
-            return 'KOTA DENPASAR';
-        }
-        if (in_array($val, ['BIMA', 'KABUPATEN BIMA', 'KAB. BIMA'])) {
+        if (in_array($clean, ['BIMA', 'KAB BIMA', 'KABUPATEN BIMA', 'BIMA KAB', 'BIMA KABUPATEN', 'BIMA NTP', 'KABUPATEN BIMA NTP'])) {
             return 'BIMA';
         }
-        if (in_array($val, ['KUPANG', 'KABUPATEN KUPANG', 'KAB. KUPANG'])) {
-            return 'KUPANG';
-        }
 
-        // Clean prefixes KAB., KABUPATEN
-        $clean = strtoupper(trim(preg_replace('/^(KAB\.|KABUPATEN)\s+/i', '', $val)));
+        // Match Kota Mataram, Kota Kupang, Kota Denpasar
+        if (in_array($clean, ['MATARAM', 'KOTA MATARAM', 'KOTA MATARAM NTP', 'MATARAM KOTA'])) return 'KOTA MATARAM';
+        if (in_array($clean, ['KUPANG KOTA', 'KOTA KUPANG', 'KOTA KUPANG NTT'])) return 'KOTA KUPANG';
+        if (in_array($clean, ['DENPASAR', 'KOTA DENPASAR', 'DENPASAR KOTA'])) return 'KOTA DENPASAR';
+        if (in_array($clean, ['KUPANG', 'KAB KUPANG', 'KABUPATEN KUPANG', 'KUPANG KAB'])) return 'KUPANG';
 
-        if ($clean === 'MATARAM') return 'KOTA MATARAM';
-        if ($clean === 'DENPASAR') return 'KOTA DENPASAR';
-        if (in_array($clean, ['KARANGASEM', 'KARANG ASEM'])) return 'KARANG ASEM';
+        // General fallback: strip prefixes KAB, KABUPATEN
+        $stripped = trim(preg_replace('/^(KAB|KABUPATEN)\s+/i', '', $clean));
+        if ($stripped === 'MATARAM') return 'KOTA MATARAM';
+        if ($stripped === 'DENPASAR') return 'KOTA DENPASAR';
+        if ($stripped === 'BIMA') return 'BIMA';
+        if (in_array($stripped, ['KARANGASEM', 'KARANG ASEM'])) return 'KARANG ASEM';
 
-        return $clean;
+        return $stripped;
     }
 
     /**

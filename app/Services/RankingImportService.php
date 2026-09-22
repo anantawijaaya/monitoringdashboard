@@ -271,7 +271,7 @@ class RankingImportService
         DB::beginTransaction();
         try {
             if ($mode === 'replace') {
-                \App\Models\PeringkatData::truncate();
+                \App\Models\PeringkatData::query()->delete();
             }
 
             for ($i = $startIndex; $i < count($rows); $i++) {
@@ -345,7 +345,7 @@ class RankingImportService
                         ->where('period_year', $periodYear)
                         ->first();
 
-                    if (!$existingRecord && str_starts_with($city, 'KOTA ')) {
+                    if (!$existingRecord && in_array($city, ['KOTA MATARAM', 'KOTA DENPASAR'])) {
                         $stripped = trim(substr($city, 5));
                         $existingRecord = \App\Models\PeringkatData::whereRaw('UPPER(TRIM(city)) = ?', [$stripped])
                             ->where('period_month', $periodMonth)
@@ -378,7 +378,9 @@ class RankingImportService
             ];
 
         } catch (Exception $e) {
-            DB::rollBack();
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
             throw $e;
         }
     }
@@ -449,7 +451,7 @@ class RankingImportService
         $matchCount = 0;
         foreach ($row as $cell) {
             $clean = strtolower(trim((string)$cell));
-            if (preg_match('/^(target|mtd|actual|ach|growth|score|pjp)%?$/i', $clean)) {
+            if ($clean !== '' && preg_match('/^(target|mtd|actual|ach|growth|score|pjp)%?$/i', $clean)) {
                 $matchCount++;
             }
         }

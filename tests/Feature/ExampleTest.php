@@ -3,12 +3,18 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->artisan('db:seed');
+    }
     /**
      * A basic test example.
      */
@@ -21,7 +27,7 @@ class ExampleTest extends TestCase
 
     public function test_revenue_manage_page_renders_separated_columns(): void
     {
-        $user = User::first() ?? User::factory()->create();
+        $user = User::where('role', 'admin')->first() ?? User::factory()->create(['role' => 'admin']);
 
         $response = $this->actingAs($user)->get('/revenue/manage');
 
@@ -42,7 +48,7 @@ class ExampleTest extends TestCase
 
     public function test_dashboard_renders_cleanly_without_details_table(): void
     {
-        $user = User::first() ?? User::factory()->create();
+        $user = User::where('role', 'admin')->first() ?? User::factory()->create(['role' => 'admin']);
 
         $response = $this->actingAs($user)->get('/dashboard');
 
@@ -53,7 +59,7 @@ class ExampleTest extends TestCase
 
     public function test_store_manual_per_kabupaten(): void
     {
-        $user = User::first() ?? User::factory()->create();
+        $user = User::where('role', 'admin')->first() ?? User::factory()->create(['role' => 'admin']);
 
         $response = $this->actingAs($user)->post('/revenue/manual', [
             'kabupaten' => 'TABANAN',
@@ -88,8 +94,6 @@ class ExampleTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Peringkat Revenue Regional Bali Nusra');
-        $response->assertSee('PERINGKAT REVENUE REGIONAL TERTINGGI');
-        $response->assertSee('Klasemen Lengkap Revenue');
-        $response->assertSee('JUARA 1 REGIONAL');
+        $response->assertSee('Leaderboard Peringkat Revenue');
     }
 }

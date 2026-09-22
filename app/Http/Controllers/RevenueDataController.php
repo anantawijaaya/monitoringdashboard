@@ -408,11 +408,17 @@ class RevenueDataController extends Controller
     {
         $request->validate([
             'file' => 'required|file|max:10240',
+            'import_mode' => 'nullable|in:replace,append,update',
+            'mode' => 'nullable|in:replace,append,update',
         ]);
 
         try {
             $file = $request->file('file');
-            $result = $importService->importFile($file);
+            $mode = $request->input('import_mode', $request->input('mode', 'replace'));
+            if ($mode === 'update') {
+                $mode = 'append';
+            }
+            $result = $importService->importFile($file, $mode);
 
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([

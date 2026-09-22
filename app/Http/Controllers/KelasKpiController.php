@@ -254,6 +254,7 @@ class KelasKpiController extends Controller
 
         $callback = function () use ($records) {
             $file = fopen('php://output', 'w');
+            fprintf($file, "\xEF\xBB\xBF");
             
             // Header with All 42 Calculation Matrix Breakdown Columns (Matching View Perhitungan Lengkap KPI)
             fputcsv($file, [
@@ -325,42 +326,42 @@ class KelasKpiController extends Controller
                     $row->periode ?: '2026-08',
 
                     // Rev ALL
-                    $row->target_rev_all,
-                    $row->actual_rev_all,
+                    round($row->target_rev_all),
+                    round($row->actual_rev_all),
                     number_format($row->ach_rev_all ?: $row->ach_percent, 1, ',', '.') . '%',
                     number_format($row->score_rev_all ?: $row->score, 0),
                     '15%',
                     number_format($row->final_score_rev_all, 2, ',', '.'),
 
                     // Rev Broadband
-                    $row->target_rev_bb,
-                    $row->actual_rev_bb,
+                    round($row->target_rev_bb),
+                    round($row->actual_rev_bb),
                     number_format($row->ach_rev_bb, 1, ',', '.') . '%',
                     number_format($row->score_rev_bb, 0),
                     $weightBb,
                     number_format($row->final_score_rev_bb, 2, ',', '.'),
 
                     // Rev Redeem PV
-                    $row->target_rev_pv,
-                    $row->actual_rev_pv,
+                    round($row->target_rev_pv),
+                    round($row->actual_rev_pv),
                     number_format($row->ach_rev_pv, 1, ',', '.') . '%',
                     number_format($row->score_rev_pv, 0),
                     $weightPv,
                     number_format($row->final_score_rev_pv, 2, ',', '.'),
 
                     // Rev RGB
-                    $row->target_rgb,
-                    $row->actual_rgb,
+                    round($row->target_rgb),
+                    round($row->actual_rgb),
                     number_format($row->ach_rgb, 1, ',', '.') . '%',
                     number_format($row->score_rgb, 0),
                     '20%',
                     number_format($row->final_score_rgb, 2, ',', '.'),
 
                     // Growth Revenue
-                    $row->omzet_rev_m1,
-                    $row->mtd_m1,
-                    $row->tgt_3_percent,
-                    $row->mtd,
+                    round($row->omzet_rev_m1),
+                    round($row->mtd_m1),
+                    round($row->tgt_3_percent),
+                    round($row->mtd),
                     number_format($row->growth, 1, ',', '.') . '%',
                     number_format($row->growth_tgt, 1, ',', '.') . '%',
                     number_format($row->rev_growth_ach_percent, 1, ',', '.') . '%',

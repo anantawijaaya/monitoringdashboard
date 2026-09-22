@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             KelasKpiSeeder::class,
             HierarchyOutletSeeder::class,
             RegionalOutletSeeder::class,
+            PeringkatDataSeeder::class,
         ]);
     }
 }

@@ -13,6 +13,9 @@ class RevenueDataSeeder extends Seeder
      */
     public function run(): void
     {
+        if (RevenueData::count() > 0) {
+            return;
+        }
         $clusters = ClusterRevenue::all();
 
         foreach ($clusters as $item) {

@@ -15,7 +15,7 @@ use App\Http\Controllers\BudgetBK\CultureProgramController;
 
 // Direct root route to Welcome page
 Route::get('/', function () {
-    return view('welcome');
+    return view('welcome-page.welcome');
 })->name('welcome');
 
 
@@ -26,6 +26,10 @@ Route::middleware('guest')->group(function () {
     
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
+
+    // Google OAuth Routes
+    Route::get('/auth/google/redirect', [AuthController::class, 'redirectToGoogle'])->name('auth.google.redirect');
+    Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
 });
 
 // Authenticated Routes
@@ -60,10 +64,32 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/growth-revenue/template', [DashboardController::class, 'downloadGrowthTemplate'])->name('growth.template');
 
-    // MONITORING BUDGET BK Routes
+    // MONITORING BUDGET BK Routes - Indirect Channel
     Route::get('/budget-bk/indirect-channel', [IndirectChannelController::class, 'index'])->name('budget-bk.indirect-channel.index');
+    Route::get('/budget-bk/indirect-channel/export', [IndirectChannelController::class, 'export'])->name('budget-bk.indirect-channel.export');
+    Route::post('/budget-bk/indirect-channel/import', [IndirectChannelController::class, 'import'])->name('budget-bk.indirect-channel.import');
+    Route::post('/budget-bk/indirect-channel/expense', [IndirectChannelController::class, 'storeExpense'])->name('budget-bk.indirect-channel.expense.store');
+    Route::post('/budget-bk/indirect-channel/expense/{id}/update', [IndirectChannelController::class, 'updateExpense'])->name('budget-bk.indirect-channel.expense.update');
+    Route::post('/budget-bk/indirect-channel/expense/{id}/status', [IndirectChannelController::class, 'updateStatus'])->name('budget-bk.indirect-channel.expense.status');
+    Route::delete('/budget-bk/indirect-channel/expense/{id}', [IndirectChannelController::class, 'destroyExpense'])->name('budget-bk.indirect-channel.expense.destroy');
+
+    // MONITORING BUDGET BK Routes - Direct Sales
     Route::get('/budget-bk/direct-sales', [DirectSalesController::class, 'index'])->name('budget-bk.direct-sales.index');
+    Route::get('/budget-bk/direct-sales/export', [DirectSalesController::class, 'export'])->name('budget-bk.direct-sales.export');
+    Route::post('/budget-bk/direct-sales/import', [DirectSalesController::class, 'import'])->name('budget-bk.direct-sales.import');
+    Route::post('/budget-bk/direct-sales/expense', [DirectSalesController::class, 'storeExpense'])->name('budget-bk.direct-sales.expense.store');
+    Route::post('/budget-bk/direct-sales/expense/{id}/update', [DirectSalesController::class, 'updateExpense'])->name('budget-bk.direct-sales.expense.update');
+    Route::post('/budget-bk/direct-sales/expense/{id}/status', [DirectSalesController::class, 'updateStatus'])->name('budget-bk.direct-sales.expense.status');
+    Route::delete('/budget-bk/direct-sales/expense/{id}', [DirectSalesController::class, 'destroyExpense'])->name('budget-bk.direct-sales.expense.destroy');
+
+    // MONITORING BUDGET BK Routes - Culture Program
     Route::get('/budget-bk/culture-program', [CultureProgramController::class, 'index'])->name('budget-bk.culture-program.index');
+    Route::get('/budget-bk/culture-program/export', [CultureProgramController::class, 'export'])->name('budget-bk.culture-program.export');
+    Route::post('/budget-bk/culture-program/import', [CultureProgramController::class, 'import'])->name('budget-bk.culture-program.import');
+    Route::post('/budget-bk/culture-program/expense', [CultureProgramController::class, 'storeExpense'])->name('budget-bk.culture-program.expense.store');
+    Route::post('/budget-bk/culture-program/expense/{id}/update', [CultureProgramController::class, 'updateExpense'])->name('budget-bk.culture-program.expense.update');
+    Route::post('/budget-bk/culture-program/expense/{id}/status', [CultureProgramController::class, 'updateStatus'])->name('budget-bk.culture-program.expense.status');
+    Route::delete('/budget-bk/culture-program/expense/{id}', [CultureProgramController::class, 'destroyExpense'])->name('budget-bk.culture-program.expense.destroy');
 
     // Mutation & Data Modification Routes: STRICTLY USER (ADMIN) ONLY
     Route::middleware('admin.only')->group(function () {

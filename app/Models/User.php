@@ -22,6 +22,9 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'cluster_name',
+        'google_id',
+        'avatar',
     ];
 
     /**
@@ -65,10 +68,21 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if user is locked to a specific cluster
+     */
+    public function hasClusterLock(): bool
+    {
+        return !empty($this->cluster_name);
+    }
+
+    /**
      * Get formatted display role
      */
     public function getRoleBadgeLabelAttribute(): string
     {
-        return $this->isVisitor() ? 'VISITOR' : 'USER (ADMIN)';
+        if ($this->isVisitor()) {
+            return $this->hasClusterLock() ? 'VISITOR (' . strtoupper($this->cluster_name) . ')' : 'VISITOR';
+        }
+        return 'USER (ADMIN)';
     }
 }

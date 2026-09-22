@@ -13,7 +13,9 @@ class KelasKpiSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('kelas_kpis')->truncate();
+        if (KelasKpi::count() > 0) {
+            return;
+        }
 
         $clusters = [
             [

@@ -13,6 +13,10 @@ class RegionalOutletSeeder extends Seeder
      */
     public function run(): void
     {
+        if (RegionalOutlet::count() > 0) {
+            return;
+        }
+
         $outlets = [
             // ==================== BALI ====================
             [
@@ -466,8 +470,6 @@ class RegionalOutletSeeder extends Seeder
                 'flag_omzet' => 2.15, // Kuning (<= 3%)
             ],
         ];
-
-        DB::table('regional_outlets')->truncate();
 
         foreach ($outlets as $outlet) {
             unset($outlet['nama_outlet']);

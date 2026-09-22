@@ -4,17 +4,24 @@ namespace Tests\Feature;
 
 use App\Models\ClusterRevenue;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class RevenueImportTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->artisan('db:seed', ['--class' => 'UserSeeder']);
+        ClusterRevenue::query()->delete();
+    }
 
     public function test_exact_screenshot_columns_import_success()
     {
-        $user = User::where('email', 'admin.balinusra@telkomsel.co.id')->first() ?? User::factory()->create(['role' => 'user']);
+        $user = User::first();
 
         // KABUPATEN;CLUSTER;BULAN;TAHUN;TARGET REV ALL;MTD REV ALL;TARGET BB;MTD BB;TARGET PV;MTD PV;Target RGB All;MTD RGB All;Data Bln Sebelumnya;Data Bln Sekarang
         $csvContent = "KABUPATEN;CLUSTER;BULAN;TAHUN;TARGET REV ALL;MTD REV ALL;TARGET BB;MTD BB;TARGET PV;MTD PV;Target RGB All;MTD RGB All;Data Bln Sebelumnya;Data Bln Sekarang\n" .
@@ -45,7 +52,7 @@ class RevenueImportTest extends TestCase
 
     public function test_scientific_notation_and_currency_formatting_import()
     {
-        $user = User::where('email', 'admin.balinusra@telkomsel.co.id')->first() ?? User::factory()->create(['role' => 'user']);
+        $user = User::first();
 
         $csvContent = "KABUPATEN;CLUSTER;TARGET REV ALL;MTD REV ALL\n" .
             "TABANAN;BALI BARAT;3.65E+09;3.56e9\n" .
@@ -73,7 +80,7 @@ class RevenueImportTest extends TestCase
 
     public function test_stacked_headers_and_banner_title_import()
     {
-        $user = User::where('email', 'admin.balinusra@telkomsel.co.id')->first() ?? User::factory()->create(['role' => 'user']);
+        $user = User::first();
 
         $csvContent = "LAPORAN REVENUE REGIONAL BALI NUSRA 2026\n" .
             "Cluster;Kabupaten;Revenue ALL;Revenue ALL;Broadband;Broadband;Redeem PV;Redeem PV;Catatan\n" .
@@ -98,7 +105,7 @@ class RevenueImportTest extends TestCase
 
     public function test_html_table_export_import()
     {
-        $user = User::where('email', 'admin.balinusra@telkomsel.co.id')->first() ?? User::factory()->create(['role' => 'user']);
+        $user = User::first();
 
         $htmlContent = "<html><body><table>" .
             "<tr><th>Cluster</th><th>Kabupaten</th><th>Target Revenue</th><th>MTD Revenue</th></tr>" .
@@ -122,7 +129,7 @@ class RevenueImportTest extends TestCase
 
     public function test_kota_mataram_kota_bima_kota_kupang_import_rgb()
     {
-        $user = User::where('email', 'admin.balinusra@telkomsel.co.id')->first() ?? User::factory()->create(['role' => 'user']);
+        $user = User::first();
 
         $csvContent = "KABUPATEN;CLUSTER;BULAN;TAHUN;TARGET REV ALL;MTD REV ALL;TARGET BB;MTD BB;TARGET PV;MTD PV;Target RGB All;MTD RGB All;Data Bln Sebelumnya;Data Bln Sekarang\n" .
             "KOTA MATARAM;LOMBOK;Agustus 2026;2026;1250000000;1220000000;1165000000;1140000000;290000000;250000000;85000000;82000000;1180000000;1220000000\n" .
@@ -159,5 +166,76 @@ class RevenueImportTest extends TestCase
         $this->assertNotNull($kotaKupang);
         $this->assertEquals(125000000, floatval($kotaKupang->target_rgb));
         $this->assertEquals(115000000, floatval($kotaKupang->mtd_rgb));
+    }
+
+    public function test_kabupaten_bima_and_kota_bima_both_imported()
+    {
+        $user = User::first();
+
+        $csvContent = "KABUPATEN;CLUSTER;BULAN;TAHUN;TARGET REV ALL;MTD REV ALL\n" .
+            "BIMA;SUMBAWA TIMUR;Agustus 2026;2026;5400000000;5750000000\n" .
+            "KOTA BIMA;SUMBAWA TIMUR;Agustus 2026;2026;4600000000;4900000000";
+
+        $file = UploadedFile::fake()->createWithContent('bima_test.csv', $csvContent);
+
+        $response = $this->actingAs($user)->post('/revenue/import', [
+            'file' => $file,
+            'import_mode' => 'append',
+        ], ['Accept' => 'application/json']);
+
+        $response->assertStatus(200);
+
+        $bima = ClusterRevenue::where('kabupaten', 'BIMA')->first();
+        $this->assertNotNull($bima);
+        $this->assertEquals(5400000000, floatval($bima->target_revenue_all));
+
+        $kotaBima = ClusterRevenue::where('kabupaten', 'KOTA BIMA')->first();
+        $this->assertNotNull($kotaBima);
+        $this->assertEquals(4600000000, floatval($kotaBima->target_revenue_all));
+    }
+
+    public function test_replace_mode_clears_old_data_and_replaces_with_new_import()
+    {
+        $user = User::first();
+
+        // Seed 2 initial records
+        ClusterRevenue::create([
+            'cluster_name' => 'BALI BARAT',
+            'kabupaten' => 'OLD_DISTRICT_1',
+            'period_month' => 'Juli 2026',
+            'period_year' => 2026,
+            'target_revenue_all' => 1000000,
+            'mtd_revenue_all' => 900000,
+        ]);
+        ClusterRevenue::create([
+            'cluster_name' => 'BALI TIMUR',
+            'kabupaten' => 'OLD_DISTRICT_2',
+            'period_month' => 'Juli 2026',
+            'period_year' => 2026,
+            'target_revenue_all' => 2000000,
+            'mtd_revenue_all' => 1800000,
+        ]);
+
+        $this->assertEquals(2, ClusterRevenue::count());
+
+        // Import new file with replace mode
+        $csvContent = "KABUPATEN;CLUSTER;BULAN;TAHUN;TARGET REV ALL;MTD REV ALL\n" .
+            "DENPASAR;BALI TENGAH;Agustus 2026;2026;5000000000;4800000000";
+
+        $file = UploadedFile::fake()->createWithContent('new_revenue.csv', $csvContent);
+
+        $response = $this->actingAs($user)->post('/revenue/import', [
+            'file' => $file,
+            'import_mode' => 'replace',
+        ], ['Accept' => 'application/json']);
+
+        $response->assertStatus(200);
+        $response->assertJson(['success' => true]);
+
+        // Old records must be gone, only 1 new record exists
+        $this->assertEquals(1, ClusterRevenue::count());
+        $denpasar = ClusterRevenue::where('kabupaten', 'KOTA DENPASAR')->first();
+        $this->assertNotNull($denpasar);
+        $this->assertNull(ClusterRevenue::where('kabupaten', 'OLD_DISTRICT_1')->first());
     }
 }

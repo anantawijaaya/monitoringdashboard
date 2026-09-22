@@ -45,6 +45,9 @@ class KelasKpiImportService
             } else {
                 $str = str_replace(',', '', $str);
             }
+        } elseif (substr_count($str, '.') > 1) {
+            $str = str_replace('.', '', $str);
+            $str = str_replace(',', '.', $str);
         } elseif (str_contains($str, ',')) {
             if (strlen(substr($str, strrpos($str, ',') + 1)) <= 2) {
                 $str = str_replace(',', '.', $str);

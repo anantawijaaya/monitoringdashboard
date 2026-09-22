@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ClusterRevenue;
 use App\Models\GrowthRevenue;
+use App\Services\BudgetCalculatorService;
 use App\Services\GrowthRevenueImportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,15 +18,19 @@ class DashboardController extends Controller
      * Growth Revenue Line Chart powered directly from growth_revenues or cluster_revenues table,
      * TOP 3 Ranking Atas, and TOP 3 Ranking Bawah.
      */
-    public function index(Request $request)
+    public function index(Request $request, BudgetCalculatorService $calculatorService)
     {
         $user = Auth::user();
 
         // Active Filters
         $selectedCluster = $request->query('cluster', 'all');
+
         $selectedKabupaten = $request->query('kabupaten', 'all');
         $selectedPeriod = $request->query('period', 'all');
         $selectedYear = intval($request->query('year', date('Y')));
+
+        // Calculate Realization Summary per Cluster across Indirect Channel, Direct Sales, and Culture Program
+        $realizationSummary = $calculatorService->calculateClusterRealizationSummary($selectedCluster);
 
         // Check if dedicated growth revenue data exists
         $hasDedicatedGrowthData = \Illuminate\Support\Facades\Schema::hasTable('growth_revenues') && GrowthRevenue::exists();
@@ -33,6 +38,11 @@ class DashboardController extends Controller
         // Fetch distinct filter options from cluster_revenues table (or combined with growth_revenues)
         if ($hasDedicatedGrowthData) {
             $availableClusters = GrowthRevenue::distinct()->pluck('cluster_name')->filter()->values();
+        } else {
+            $availableClusters = ClusterRevenue::distinct()->pluck('cluster_name')->filter()->values();
+        }
+
+        if ($hasDedicatedGrowthData) {
             $availableKabupatens = GrowthRevenue::query()
                 ->when($selectedCluster !== 'all' && !empty($selectedCluster), function ($q) use ($selectedCluster) {
                     return $q->where('cluster_name', $selectedCluster);
@@ -42,7 +52,6 @@ class DashboardController extends Controller
                 ->filter()
                 ->values();
         } else {
-            $availableClusters = ClusterRevenue::distinct()->pluck('cluster_name')->filter()->values();
             $availableKabupatens = ClusterRevenue::query()
                 ->when($selectedCluster !== 'all' && !empty($selectedCluster), function ($q) use ($selectedCluster) {
                     return $q->where('cluster_name', $selectedCluster);
@@ -300,7 +309,7 @@ class DashboardController extends Controller
             ->orderByDesc('ach_revenue_all')
             ->paginate(15);
 
-        return view('dashboard', compact(
+        return view('home.dashboard', compact(
             'user',
             'revenueData',
             'chartData',
@@ -315,7 +324,8 @@ class DashboardController extends Controller
             'selectedPeriod',
             'selectedYear',
             'hasData',
-            'hasDedicatedGrowthData'
+            'hasDedicatedGrowthData',
+            'realizationSummary'
         ));
     }
 

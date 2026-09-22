@@ -13,6 +13,9 @@ class ClusterRevenueSeeder extends Seeder
      */
     public function run(): void
     {
+        if (ClusterRevenue::count() > 0) {
+            return;
+        }
         $kabupatens = [
             // 1. BALI BARAT
             [
@@ -702,9 +705,6 @@ class ClusterRevenueSeeder extends Seeder
                 'notes' => 'Kabupaten Dompu',
             ],
         ];
-
-        // Clean existing aggregate records and re-seed with 41 individual kabupaten records
-        ClusterRevenue::truncate();
 
         foreach ($kabupatens as $item) {
             ClusterRevenue::create($item);
