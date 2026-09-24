@@ -93,7 +93,7 @@ class ExampleTest extends TestCase
         $response = $this->actingAs($user)->get('/ranking');
 
         $response->assertStatus(200);
-        $response->assertSee('Peringkat Revenue Regional Bali Nusra');
-        $response->assertSee('Leaderboard Peringkat Revenue');
+        $response->assertSee('City Ranking Berdasarkan Branch');
+        $response->assertSee('Branch');
     }
 }

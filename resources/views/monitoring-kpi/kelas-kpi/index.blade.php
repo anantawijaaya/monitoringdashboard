@@ -172,10 +172,10 @@
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <div id="kpiHeaderTitleBlock" class="{{ ($viewMode ?? 'ringkasan') === 'ringkasan' ? '' : 'hidden' }}">
                         <h1 class="text-[19px] font-black text-slate-900 tracking-tight">
-                            
+                            KELAS KPI CLUSTER BALI NUSRA
                         </h1>
                         <p class="text-xs sm:text-sm text-slate-500 mt-0.5 font-medium">
-                            
+                            Monitoring Pencapaian Revenue, Bobot, dan Peringkat KPI Setiap Cluster
                         </p>
                     </div>
 

@@ -61,7 +61,9 @@ class DashboardController extends Controller
                 ->filter()
                 ->values();
         }
-        $availablePeriods = ClusterRevenue::distinct()->pluck('period_month')->filter()->values();
+        $availablePeriods = \App\Http\Controllers\KelasKpiController::sortPeriodesChronologically(
+            ClusterRevenue::distinct()->pluck('period_month')->filter()
+        );
 
         // Base Query for Cluster Revenues (Main KPI Summary & Leaderboard)
         $clusterQuery = ClusterRevenue::query();

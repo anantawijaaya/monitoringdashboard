@@ -71,37 +71,56 @@ class KelasKpiController extends Controller
             ->map(fn($r) => $r->cluster ?: $r->new_cluster)
             ->filter()->unique()->sort()->values();
 
-        $availablePeriodes = KelasKpi::select('periode')
-            ->whereNotNull('periode')
-            ->where('periode', '!=', '')
-            ->distinct()
-            ->pluck('periode')
-            ->sort()
-            ->values();
+        $availablePeriodes = self::sortPeriodesChronologically(
+            KelasKpi::select('periode')
+                ->whereNotNull('periode')
+                ->where('periode', '!=', '')
+                ->distinct()
+                ->pluck('periode')
+        );
 
-        // Fetch all records for Analisis Data view (multi-line chart per Periode across clusters)
+        // Fetch all records for Analisis Data view (multi-line chart across available Periodes)
         $analisisRawData = KelasKpi::select('cluster', 'new_cluster', 'periode', 'final_score', 'total_score', 'class')
             ->whereNotNull('periode')
             ->where('periode', '!=', '')
             ->get();
 
-        // Unique X-Axis Labels: Clusters
+        // 1. Available Periodes (sorted chronologically from January to December)
+        $analisisPeriodes = self::sortPeriodesChronologically(
+            $analisisRawData->pluck('periode')->filter()->unique()
+        )->toArray();
+
+        // 2. Month Labels for X-Axis (Indikator Bulan di sumbu X mengikuti periode data yang tersedia)
+        $analisisMonths = array_map(function($p) {
+            if (preg_match('/^(\d{4})[-_]?(\d{1,2})$/', trim($p), $m)) {
+                $year = $m[1];
+                $monthNum = (int)$m[2];
+                $months = [
+                    1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+                    5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+                    9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+                ];
+                if (isset($months[$monthNum])) {
+                    return $months[$monthNum] . ' ' . $year;
+                }
+            }
+            return $p;
+        }, $analisisPeriodes);
+
+        if (empty($analisisMonths)) {
+            $analisisMonths = ['Tidak Ada Data'];
+        }
+
+        // 3. Available Clusters
         $analisisClusters = $analisisRawData->map(fn($r) => $r->cluster ?: $r->new_cluster)
             ->filter()->unique()->sort()->values()->toArray();
 
-        // Unique Datasets: Periodes
-        $analisisPeriodes = $analisisRawData->pluck('periode')
-            ->filter()->unique()->sort()->values()->toArray();
-
-        // 12 Months for X-Axis (Keterangan Bulan di Bagian Bawah)
-        $analisisMonths = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-
-        // Palette of vibrant, distinct colors for line charts per Periode (Matching reference image)
+        // Palette of vibrant, distinct colors for line charts
         $colorPalette = [
-            '#F59E0B', // Amber / Gold (Bulan Sebelumnya / Periode 1)
-            '#10B981', // Emerald Green (Bulan Sekarang / Periode 2)
-            '#ED1C24', // Telkomsel Red
+            '#ED1C24', // Telkomsel Red (Rata-rata Regional)
             '#2563EB', // Royal Blue
+            '#10B981', // Emerald Green
+            '#F59E0B', // Amber / Gold
             '#8B5CF6', // Purple
             '#06B6D4', // Cyan
             '#EC4899', // Pink
@@ -110,81 +129,61 @@ class KelasKpiController extends Controller
             '#84CC16', // Lime
         ];
 
-        // Prepare 12-month data map for all clusters and individual clusters
-        $analisisDataMap = [];
+        // 4. Compute Scores across Periodes for Regional Average & Per Cluster
         $avgScorePerPeriode = [];
-
-        // Base 12-month variation curve template matching reference screenshot
-        $baseCurveTemplate = [2.0, 2.5, 2.0, 2.1, 2.1, 2.0, 2.0, 2.3, 2.1, 2.1, 1.85, 1.65];
-
-        foreach ($analisisPeriodes as $pIndex => $periodeVal) {
+        foreach ($analisisPeriodes as $periodeVal) {
             $scoresInPeriode = [];
-            $clusterScoresList = [];
-
             foreach ($analisisClusters as $clusterName) {
                 $rec = $analisisRawData->first(function ($r) use ($clusterName, $periodeVal) {
                     $c = $r->cluster ?: $r->new_cluster;
                     return $c === $clusterName && $r->periode === $periodeVal;
                 });
-                
-                $score = $rec ? (float) ($rec->final_score ?: $rec->total_score ?: 0) : 0;
                 if ($rec) {
-                    $scoresInPeriode[] = (float) ($rec->final_score ?: $rec->total_score);
-                    $clusterScoresList[] = round($score, 2);
+                    $scoreVal = (float) ($rec->final_score ?: $rec->total_score ?: 0);
+                    $scoresInPeriode[] = $scoreVal;
                 }
             }
-
-            if (count($scoresInPeriode) > 0) {
-                $avgScorePerPeriode[$periodeVal] = round(array_sum($scoresInPeriode) / count($scoresInPeriode), 2);
-            }
-
-            // Overall 'all' dataset data array (12 months)
-            if (count($clusterScoresList) >= 12) {
-                $allCurve = array_slice($clusterScoresList, 0, 12);
-            } else {
-                $allCurve = $baseCurveTemplate;
-                if ($pIndex === 1) {
-                    // Slight variation for second periode
-                    $allCurve = [2.1, 2.4, 2.1, 2.2, 2.15, 2.05, 2.1, 2.25, 2.15, 2.15, 2.0, 1.75];
-                }
-            }
-            $analisisDataMap['all'][$periodeVal] = $allCurve;
+            $avgVal = count($scoresInPeriode) > 0 ? round(array_sum($scoresInPeriode) / count($scoresInPeriode), 2) : 0;
+            $avgScorePerPeriode[$periodeVal] = $avgVal;
         }
 
-        // Per-cluster 12-month data map
-        foreach ($analisisClusters as $cIdx => $clusterName) {
-            foreach ($analisisPeriodes as $pIndex => $periodeVal) {
+        $analisisDataMap = [];
+        
+        // Regional Average Line Data across periodes
+        $analisisDataMap['all'] = [];
+        foreach ($analisisPeriodes as $periodeVal) {
+            $analisisDataMap['all'][] = $avgScorePerPeriode[$periodeVal] ?? 0;
+        }
+
+        // Individual Cluster Line Data across periodes
+        foreach ($analisisClusters as $clusterName) {
+            $analisisDataMap[$clusterName] = [];
+            foreach ($analisisPeriodes as $periodeVal) {
                 $rec = $analisisRawData->first(function ($r) use ($clusterName, $periodeVal) {
                     $c = $r->cluster ?: $r->new_cluster;
                     return $c === $clusterName && $r->periode === $periodeVal;
                 });
-                $base = $rec ? (float) ($rec->final_score ?: $rec->total_score ?: 2.0) : 2.0;
-
-                // Build 12 monthly variations for this cluster
-                $variations = [0.0, 0.4, 0.0, 0.1, 0.1, 0.0, 0.0, 0.2, 0.1, 0.1, -0.15, -0.35];
-                $cCurve = [];
-                foreach ($variations as $v) {
-                    $val = max(0.0, min(3.2, round($base + $v, 2)));
-                    $cCurve[] = $val;
-                }
-                $analisisDataMap[$clusterName][$periodeVal] = $cCurve;
+                $score = $rec ? (float) ($rec->final_score ?: $rec->total_score ?: 0) : 0;
+                $analisisDataMap[$clusterName][] = round($score, 2);
             }
         }
 
-        // Datasets array for initial Chart render
+        // 5. Prepare Initial Chart Datasets
         $analisisChartDatasets = [];
-        foreach ($analisisPeriodes as $pIndex => $periodeVal) {
-            $color = $colorPalette[$pIndex % count($colorPalette)];
+        
+        // Datasets per Cluster
+        foreach ($analisisClusters as $cIdx => $clusterName) {
+            $color = $colorPalette[$cIdx % count($colorPalette)];
             $analisisChartDatasets[] = [
-                'label' => 'Periode ' . $periodeVal,
-                'periode' => $periodeVal,
-                'data' => $analisisDataMap['all'][$periodeVal] ?? $baseCurveTemplate,
+                'label' => $clusterName,
+                'cluster' => $clusterName,
+                'data' => $analisisDataMap[$clusterName] ?? [],
                 'borderColor' => $color,
-                'backgroundColor' => $color,
-                'borderWidth' => 3.5,
-                'tension' => 0.45,
-                'pointRadius' => 4.5,
-                'pointHoverRadius' => 8,
+                'backgroundColor' => 'transparent',
+                'borderWidth' => 2.5,
+                'tension' => 0.4,
+                'pointRadius' => 4,
+                'pointHoverRadius' => 7,
                 'fill' => false,
             ];
         }
@@ -489,5 +488,52 @@ class KelasKpiController extends Controller
         };
 
         return Response::stream($callback, 200, $headers);
+    }
+
+    /**
+     * Helper method to sort month/period strings (e.g., "Januari 2026", "Februari 2026", "2026-01")
+     * chronologically from January to December.
+     */
+    public static function sortPeriodesChronologically($periodesCollection)
+    {
+        $monthsMap = [
+            'januari' => 1, 'jan' => 1,
+            'februari' => 2, 'feb' => 2,
+            'maret' => 3, 'mar' => 3,
+            'april' => 4, 'apr' => 4,
+            'mei' => 5, 'may' => 5,
+            'juni' => 6, 'jun' => 6,
+            'juli' => 7, 'jul' => 7,
+            'agustus' => 8, 'aug' => 8, 'agust' => 8,
+            'september' => 9, 'sep' => 9, 'sept' => 9,
+            'oktober' => 10, 'okt' => 10, 'oct' => 10,
+            'november' => 11, 'nov' => 11,
+            'desember' => 12, 'des' => 12, 'dec' => 12,
+        ];
+
+        return collect($periodesCollection)->sortBy(function ($p) use ($monthsMap) {
+            $str = strtolower(trim((string) $p));
+
+            // Format YYYY-MM or YYYY_MM
+            if (preg_match('/^(\d{4})[-_]?(\d{1,2})$/', $str, $m)) {
+                return (int)$m[1] * 100 + (int)$m[2];
+            }
+
+            // Format "Month YYYY" (e.g. "Januari 2026")
+            $monthNum = 0;
+            foreach ($monthsMap as $name => $num) {
+                if (str_contains($str, $name)) {
+                    $monthNum = $num;
+                    break;
+                }
+            }
+
+            $year = 0;
+            if (preg_match('/(\d{4})/', $str, $yMatch)) {
+                $year = (int)$yMatch[1];
+            }
+
+            return $year * 100 + $monthNum;
+        })->values();
     }
 }

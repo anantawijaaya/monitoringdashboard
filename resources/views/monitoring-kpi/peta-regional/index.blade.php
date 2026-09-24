@@ -229,24 +229,18 @@
 
             <!-- Toast Flash Messages -->
             @if(session('success'))
-                <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-center justify-between shadow-sm">
-                    <div class="flex items-center gap-3">
-                        <i class="bi bi-check-circle-fill text-emerald-600 text-lg"></i>
-                        <span>{{ session('success') }}</span>
-                    </div>
-                    <button onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700 cursor-pointer">
+                <div class="py-2 px-1 text-emerald-700 text-sm flex items-center justify-between">
+                    <span>{{ session('success') }}</span>
+                    <button onclick="this.parentElement.remove()" class="text-emerald-600 hover:text-emerald-900 cursor-pointer">
                         <i class="bi bi-x-lg"></i>
                     </button>
                 </div>
             @endif
 
             @if(session('error'))
-                <div class="p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm flex items-center justify-between shadow-sm">
-                    <div class="flex items-center gap-3">
-                        <i class="bi bi-exclamation-triangle-fill text-red-600 text-lg"></i>
-                        <span>{{ session('error') }}</span>
-                    </div>
-                    <button onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 cursor-pointer">
+                <div class="py-2 px-1 text-red-700 text-sm flex items-center justify-between">
+                    <span>{{ session('error') }}</span>
+                    <button onclick="this.parentElement.remove()" class="text-red-600 hover:text-red-900 cursor-pointer">
                         <i class="bi bi-x-lg"></i>
                     </button>
                 </div>

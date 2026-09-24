@@ -70,20 +70,16 @@
 
                     <!-- Filter Cluster Dropdown -->
                     <div class="relative min-w-[140px] z-30" id="analisisClusterDropdownContainer">
-                        <input type="hidden" id="analisisFilterCluster" value="all">
+                        <input type="hidden" id="analisisFilterCluster" value="{{ $analisisClusters[0] ?? 'BALI BARAT' }}">
                         <button type="button" 
                                 onclick="toggleAnalisisClusterMenu(event)"
                                 class="w-full flex items-center justify-between gap-2 bg-white border border-slate-200/90 hover:bg-slate-50 rounded-full px-4 py-1.5 text-xs font-bold text-slate-700 shadow-xs focus:outline-none cursor-pointer">
-                            <span id="analisisClusterBtnText">Semua Cluster</span>
+                            <span id="analisisClusterBtnText">{{ $analisisClusters[0] ?? 'BALI BARAT' }}</span>
                             <i id="analisisClusterArrow" class="bi bi-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
                         </button>
 
                         <div id="analisisClusterMenu" 
                              class="hidden absolute top-full right-0 mt-1.5 w-52 bg-white border border-slate-200 rounded-2xl shadow-xl py-1.5 z-50 max-h-60 overflow-y-auto">
-                            <a href="javascript:void(0)" onclick="selectAnalisisCluster('all', 'Semua Cluster')"
-                               class="block px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors">
-                                Semua Cluster
-                            </a>
                             @foreach($analisisClusters as $c)
                                 <a href="javascript:void(0)" onclick="selectAnalisisCluster('{{ $c }}', '{{ $c }}')"
                                    class="block px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors">

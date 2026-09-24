@@ -167,22 +167,16 @@
                 
                 <!-- Alert Flash Messages -->
                 @if(session('success'))
-                    <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-800 text-xs font-bold flex items-center justify-between shadow-sm">
-                        <div class="flex items-center gap-2">
-                            <i class="bi bi-check-circle-fill text-emerald-500 text-base"></i>
-                            <span>{{ session('success') }}</span>
-                        </div>
-                        <button onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700"><i class="bi bi-x-lg"></i></button>
+                    <div class="py-2 px-1 text-emerald-700 text-xs font-bold flex items-center justify-between">
+                        <span>{{ session('success') }}</span>
+                        <button onclick="this.parentElement.remove()" class="text-emerald-600 hover:text-emerald-900 cursor-pointer"><i class="bi bi-x-lg"></i></button>
                     </div>
                 @endif
 
                 @if(session('error'))
-                    <div class="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-800 text-xs font-bold flex items-center justify-between shadow-sm">
-                        <div class="flex items-center gap-2">
-                            <i class="bi bi-exclamation-triangle-fill text-rose-500 text-base"></i>
-                            <span>{{ session('error') }}</span>
-                        </div>
-                        <button onclick="this.parentElement.remove()" class="text-rose-500 hover:text-rose-700"><i class="bi bi-x-lg"></i></button>
+                    <div class="py-2 px-1 text-rose-700 text-xs font-bold flex items-center justify-between">
+                        <span>{{ session('error') }}</span>
+                        <button onclick="this.parentElement.remove()" class="text-rose-600 hover:text-rose-900 cursor-pointer"><i class="bi bi-x-lg"></i></button>
                     </div>
                 @endif
 

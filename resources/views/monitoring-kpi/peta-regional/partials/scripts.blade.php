@@ -685,11 +685,13 @@
 
         if (submenu.classList.contains('hidden')) {
             submenu.classList.remove('hidden');
-            arrow.style.transform = 'rotate(0deg)';
+            arrow.classList.add('rotate-90');
+            arrow.style.transform = '';
             localStorage.setItem('sidebarKpiSbpOpen', 'true');
         } else {
             submenu.classList.add('hidden');
-            arrow.style.transform = 'rotate(-90deg)';
+            arrow.classList.remove('rotate-90');
+            arrow.style.transform = '';
             localStorage.setItem('sidebarKpiSbpOpen', 'false');
         }
     }
@@ -704,7 +706,12 @@
         const arrow = document.getElementById('kpiSbpArrow');
         if (isOpened === 'false' && submenu && arrow) {
             submenu.classList.add('hidden');
-            arrow.style.transform = 'rotate(-90deg)';
+            arrow.classList.remove('rotate-90');
+            arrow.style.transform = '';
+        } else if (isOpened === 'true' && submenu && arrow) {
+            submenu.classList.remove('hidden');
+            arrow.classList.add('rotate-90');
+            arrow.style.transform = '';
         }
 
         // Restore Sidebar collapse state

@@ -34,7 +34,9 @@ class RankingController extends Controller
 
         // Dropdown Options
         $availableClusters = PeringkatData::distinct()->pluck('cluster')->filter()->sort()->values();
-        $availablePeriods = PeringkatData::distinct()->pluck('period_month')->filter()->values();
+        $availablePeriods = \App\Http\Controllers\KelasKpiController::sortPeriodesChronologically(
+            PeringkatData::distinct()->pluck('period_month')->filter()
+        );
         $availableYears = PeringkatData::distinct()->pluck('period_year')->filter()->values();
 
         // Base Query

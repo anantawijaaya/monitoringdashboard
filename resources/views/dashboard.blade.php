@@ -188,24 +188,18 @@
 
                 <!-- FLASH SUCCESS / ERROR ALERTS -->
                 @if(session('success'))
-                    <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-between shadow-sm animate-fade-in">
-                        <div class="flex items-center gap-3">
-                            <i class="bi bi-check-circle-fill text-xl text-emerald-600"></i>
-                            <span class="text-xs sm:text-sm font-semibold">{{ session('success') }}</span>
-                        </div>
-                        <button onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-800">
+                    <div class="py-2 px-1 text-emerald-700 flex items-center justify-between animate-fade-in">
+                        <span class="text-xs sm:text-sm font-semibold">{{ session('success') }}</span>
+                        <button onclick="this.parentElement.remove()" class="text-emerald-600 hover:text-emerald-900 cursor-pointer">
                             <i class="bi bi-x-lg"></i>
                         </button>
                     </div>
                 @endif
 
                 @if(session('error'))
-                    <div class="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 flex items-center justify-between shadow-sm animate-fade-in">
-                        <div class="flex items-center gap-3">
-                            <i class="bi bi-exclamation-triangle-fill text-xl text-red-600"></i>
-                            <span class="text-xs sm:text-sm font-semibold">{{ session('error') }}</span>
-                        </div>
-                        <button onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-800">
+                    <div class="py-2 px-1 text-red-700 flex items-center justify-between animate-fade-in">
+                        <span class="text-xs sm:text-sm font-semibold">{{ session('error') }}</span>
+                        <button onclick="this.parentElement.remove()" class="text-red-600 hover:text-red-900 cursor-pointer">
                             <i class="bi bi-x-lg"></i>
                         </button>
                     </div>
@@ -1595,11 +1589,13 @@
 
             if (submenu.classList.contains('hidden')) {
                 submenu.classList.remove('hidden');
-                arrow.style.transform = 'rotate(0deg)';
+                arrow.classList.add('rotate-90');
+                arrow.style.transform = '';
                 localStorage.setItem('sidebarKpiSbpOpen', 'true');
             } else {
                 submenu.classList.add('hidden');
-                arrow.style.transform = 'rotate(-90deg)';
+                arrow.classList.remove('rotate-90');
+                arrow.style.transform = '';
                 localStorage.setItem('sidebarKpiSbpOpen', 'false');
             }
         }
@@ -1611,7 +1607,12 @@
             const arrow = document.getElementById('kpiSbpArrow');
             if (isOpened === 'false' && submenu && arrow) {
                 submenu.classList.add('hidden');
-                arrow.style.transform = 'rotate(-90deg)';
+                arrow.classList.remove('rotate-90');
+                arrow.style.transform = '';
+            } else if (isOpened === 'true' && submenu && arrow) {
+                submenu.classList.remove('hidden');
+                arrow.classList.add('rotate-90');
+                arrow.style.transform = '';
             }
 
             // Restore Sidebar collapse state

@@ -173,12 +173,9 @@
 
                 <!-- ALERT NOTIFICATIONS -->
                 @if(session('success'))
-                    <div class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-5 py-3.5 rounded-2xl text-xs font-semibold flex items-center justify-between shadow-lg">
-                        <div class="flex items-center gap-2.5">
-                            <i class="bi bi-check-circle-fill text-lg"></i>
-                            <span>{{ session('success') }}</span>
-                        </div>
-                        <button onclick="this.parentElement.remove()" class="text-emerald-400 hover:text-white"><i class="bi bi-x-lg"></i></button>
+                    <div class="py-2 px-1 text-emerald-700 text-xs font-semibold flex items-center justify-between">
+                        <span>{{ session('success') }}</span>
+                        <button onclick="this.parentElement.remove()" class="text-emerald-600 hover:text-emerald-900 cursor-pointer"><i class="bi bi-x-lg"></i></button>
                     </div>
                 @endif
 

@@ -321,4 +321,32 @@
         document.getElementById('fileUploadPrompt').classList.remove('hidden');
         document.getElementById('fileUploadPreview').classList.add('hidden');
     }
+
+    // Preserve & Restore Scroll Position for Main Canvas across page reloads & form submits
+    (function() {
+        function initScrollPreservation() {
+            const mainCanvas = document.querySelector('main');
+            if (!mainCanvas) return;
+
+            const savedScrollPos = sessionStorage.getItem('budgetBkMainScrollTop');
+            if (savedScrollPos !== null) {
+                mainCanvas.scrollTop = parseFloat(savedScrollPos);
+                sessionStorage.removeItem('budgetBkMainScrollTop');
+            }
+
+            document.querySelectorAll('form').forEach(form => {
+                form.addEventListener('submit', function() {
+                    if (mainCanvas) {
+                        sessionStorage.setItem('budgetBkMainScrollTop', mainCanvas.scrollTop);
+                    }
+                });
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initScrollPreservation);
+        } else {
+            initScrollPreservation();
+        }
+    })();
 </script>

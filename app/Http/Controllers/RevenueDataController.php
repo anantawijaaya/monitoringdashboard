@@ -30,7 +30,9 @@ class RevenueDataController extends Controller
         // Available Filter Dropdowns
         $availableClusters = ClusterRevenue::distinct()->pluck('cluster_name')->filter()->sort()->values();
         $availableKabupatens = ClusterRevenue::distinct()->pluck('kabupaten')->filter()->sort()->values();
-        $availablePeriods = ClusterRevenue::distinct()->pluck('period_month')->filter()->values();
+        $availablePeriods = \App\Http\Controllers\KelasKpiController::sortPeriodesChronologically(
+            ClusterRevenue::distinct()->pluck('period_month')->filter()
+        );
         $availableYears = ClusterRevenue::distinct()->pluck('period_year')->filter()->values();
 
         // Query Builder

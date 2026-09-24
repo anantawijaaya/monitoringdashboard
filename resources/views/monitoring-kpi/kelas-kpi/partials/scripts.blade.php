@@ -4,6 +4,8 @@
     const analisisMonthsList = @json($analisisMonths);
     const analisisDataMapObj = @json($analisisDataMap);
     const analisisPeriodesList = @json($analisisPeriodes);
+    const analisisInitialDatasets = @json($analisisChartDatasets);
+
 
     function updateSwitcherButtons(mode) {
         const activeClass = "px-3.5 py-1.5 rounded-full text-xs font-extrabold transition-all cursor-pointer shadow-xs bg-[#ED1C24] text-white flex items-center gap-1.5";
@@ -42,7 +44,7 @@
             if (viewAnalisis) viewAnalisis.classList.remove('hidden');
             if (titleBlock) titleBlock.classList.add('hidden');
             if (headerActions) headerActions.classList.add('hidden');
-            setTimeout(initAnalisisChart, 50);
+            setTimeout(initAnalisisChart, 100);
         }
 
         updateSwitcherButtons(mode);
@@ -55,115 +57,202 @@
         }
     }
 
+    const verticalHoverLinePlugin = {
+        id: 'verticalHoverLine',
+        beforeDraw: (chart) => {
+            const activeElems = chart.getActiveElements ? chart.getActiveElements() : (chart.tooltip ? chart.tooltip._active : []);
+            if (activeElems && activeElems.length) {
+                const ctx = chart.ctx;
+                const activePoint = activeElems[0];
+                if (!activePoint || !activePoint.element) return;
+
+                const x = activePoint.element.x;
+                const topY = chart.scales.y ? chart.scales.y.top : 0;
+                const bottomY = chart.scales.y ? chart.scales.y.bottom : chart.height;
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(x, topY);
+                ctx.lineTo(x, bottomY);
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([4, 4]);
+                ctx.strokeStyle = 'rgba(237, 28, 36, 0.5)';
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+    };
+
     function initAnalisisChart() {
         const ctx = document.getElementById('analisisLineChart');
         if (!ctx) return;
 
-        if (analisisChartInstance) {
-            analisisChartInstance.resize();
+        if (ctx.clientWidth === 0 || ctx.clientHeight === 0) {
+            setTimeout(initAnalisisChart, 100);
             return;
         }
 
-        const canvasCtx = ctx.getContext('2d');
-        const colorPalette = ['#F59E0B', '#10B981', '#ED1C24', '#2563EB', '#8B5CF6', '#06B6D4'];
+        if (analisisChartInstance) {
+            analisisChartInstance.destroy();
+            analisisChartInstance = null;
+        }
 
-        const chartDatasets = analisisPeriodesList.map((pVal, idx) => {
-            const color = colorPalette[idx % colorPalette.length];
-            const dataArr = (analisisDataMapObj['all'] && analisisDataMapObj['all'][pVal]) 
-                ? analisisDataMapObj['all'][pVal] 
-                : [2.0, 2.5, 2.0, 2.1, 2.1, 2.0, 2.0, 2.3, 2.1, 2.1, 1.85, 1.65];
+        const chartCanvasCtx = ctx.getContext('2d');
 
-            let bgFill = 'transparent';
-            if (idx === 0) {
-                const grad = canvasCtx.createLinearGradient(0, 0, 0, 420);
-                grad.addColorStop(0, 'rgba(245, 158, 11, 0.20)');
-                grad.addColorStop(0.7, 'rgba(245, 158, 11, 0.04)');
-                grad.addColorStop(1, 'rgba(245, 158, 11, 0.00)');
-                bgFill = grad;
+        analisisInitialDatasets.forEach((ds) => {
+            const hex = ds.borderColor || '#ED1C24';
+            
+            let r = 237, g = 28, b = 36;
+            let c = hex.replace('#', '');
+            if (c.length === 3) c = c.split('').map(x => x + x).join('');
+            if (c.length === 6) {
+                const num = parseInt(c, 16);
+                r = (num >> 16) & 255;
+                g = (num >> 8) & 255;
+                b = num & 255;
             }
 
-            return {
-                label: 'Periode ' + pVal,
-                periode: pVal,
-                data: dataArr,
-                borderColor: color,
-                borderWidth: 3.5,
-                tension: 0.45,
-                fill: idx === 0 ? 'origin' : false,
-                backgroundColor: bgFill,
-                pointBackgroundColor: '#FFFFFF',
-                pointBorderColor: color,
-                pointBorderWidth: 2.5,
-                pointRadius: 4.5,
-                pointHoverRadius: 8,
-                pointHoverBorderWidth: 3,
-            };
+            const gradient = chartCanvasCtx.createLinearGradient(0, 0, 0, 360);
+            gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.28)`);
+            gradient.addColorStop(0.65, `rgba(${r}, ${g}, ${b}, 0.08)`);
+            gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0.0)`);
+
+            ds.fill = true;
+            ds.backgroundColor = gradient;
+            ds.tension = 0.2;
+            ds.borderWidth = 3;
+            ds.pointBackgroundColor = '#FFFFFF';
+            ds.pointBorderColor = hex;
+            ds.pointBorderWidth = 2.5;
+            ds.pointRadius = 5;
+            ds.pointHoverRadius = 9;
+            ds.pointHitRadius = 35;
+            ds.pointHoverBackgroundColor = '#FFFFFF';
+            ds.pointHoverBorderColor = hex;
+            ds.pointHoverBorderWidth = 3.5;
         });
 
         analisisChartInstance = new Chart(ctx, {
             type: 'line',
+            plugins: [verticalHoverLinePlugin],
             data: {
                 labels: analisisMonthsList,
-                datasets: chartDatasets
+                datasets: analisisInitialDatasets
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        left: 15,
+                        right: 45,
+                        top: 20,
+                        bottom: 5
+                    }
+                },
+                events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
+                hover: {
+                    mode: 'index',
+                    intersect: false
+                },
                 interaction: {
                     mode: 'index',
-                    intersect: false,
+                    intersect: false
+                },
+                onHover: (event, activeElements) => {
+                    const el = event.native ? event.native.target : (event.target || null);
+                    if (el && el.style) {
+                        el.style.cursor = activeElements && activeElements.length ? 'pointer' : 'default';
+                    }
                 },
                 plugins: {
                     legend: {
-                        display: true,
-                        position: 'top',
-                        align: 'center',
-                        labels: {
-                            usePointStyle: true,
-                            pointStyle: 'circle',
-                            boxWidth: 8,
-                            boxHeight: 8,
-                            padding: 20,
-                            font: {
-                                family: 'Plus Jakarta Sans',
-                                size: 11,
-                                weight: 'bold'
-                            },
-                            color: '#334155'
-                        }
+                        display: false
                     },
                     tooltip: {
-                        backgroundColor: '#1E293B',
-                        titleFont: { family: 'Plus Jakarta Sans', size: 12, weight: 'bold' },
-                        bodyFont: { family: 'Plus Jakarta Sans', size: 11 },
+                        enabled: true,
+                        mode: 'index',
+                        intersect: false,
+                        position: 'nearest',
+                        backgroundColor: '#FFFFFF',
+                        titleColor: '#64748B',
+                        bodyColor: '#1E293B',
+                        borderColor: 'rgba(226, 232, 240, 0.9)',
+                        borderWidth: 1,
                         padding: 12,
                         cornerRadius: 12,
+                        titleFont: { family: 'Plus Jakarta Sans', size: 11, weight: '600' },
+                        bodyFont: { family: 'Plus Jakarta Sans', size: 12, weight: 'bold' },
+                        usePointStyle: true,
+                        boxWidth: 8,
+                        boxHeight: 8,
+                        boxPadding: 6,
+                        filter: function(tooltipItem) {
+                            if (!tooltipItem || !tooltipItem.dataset) return false;
+                            if (tooltipItem.dataset.hidden) return false;
+                            const val = tooltipItem.parsed ? tooltipItem.parsed.y : tooltipItem.raw;
+                            return val !== null && val !== undefined && !isNaN(val);
+                        },
                         callbacks: {
+                            title: function(items) {
+                                if (!items || !items.length) return '';
+                                const idx = items[0].dataIndex;
+                                if (analisisMonthsList && analisisMonthsList[idx]) {
+                                    return analisisMonthsList[idx];
+                                }
+                                return items[0].label || '';
+                            },
                             label: function(context) {
-                                let val = context.parsed.y;
+                                let val = context.parsed ? context.parsed.y : context.raw;
+                                if (val === null || val === undefined || isNaN(val)) {
+                                    return null;
+                                }
                                 let label = context.dataset.label || '';
-                                return `${label}: ${val.toFixed(2)}`;
+                                return ` ${label}: ${Number(val).toFixed(2)}`;
                             }
                         }
                     }
                 },
                 scales: {
                     x: {
-                        grid: { display: false, drawBorder: false },
+                        grid: { 
+                            color: 'rgba(241, 245, 249, 0.7)', 
+                            drawBorder: false,
+                            offset: false
+                        },
                         ticks: {
-                            font: { family: 'Plus Jakarta Sans', size: 10, weight: 'bold' },
-                            color: function(context) {
-                                return context.index === 8 ? '#0284C7' : '#334155';
+                            font: { family: 'Plus Jakarta Sans', size: 10, weight: '600' },
+                            color: '#475569',
+                            autoSkip: false,
+                            align: 'center',
+                            maxRotation: 0,
+                            minRotation: 0,
+                            callback: function(value, index, values) {
+                                const fullLabel = this.getLabelForValue(value);
+                                if (!fullLabel) return '';
+                                const monthsMap = {
+                                    'januari': 'Jan', 'februari': 'Feb', 'maret': 'Mar', 'april': 'Apr',
+                                    'mei': 'Mei', 'juni': 'Jun', 'juli': 'Jul', 'agustus': 'Agt',
+                                    'september': 'Sep', 'oktober': 'Okt', 'november': 'Nov', 'desember': 'Des'
+                                };
+                                let str = String(fullLabel);
+                                for (let k in monthsMap) {
+                                    let r = new RegExp(k, 'gi');
+                                    if (r.test(str)) {
+                                        return str.replace(r, monthsMap[k]);
+                                    }
+                                }
+                                return str;
                             }
                         }
                     },
                     y: {
                         min: 0,
-                        max: 3.2,
-                        grid: { color: '#F1F5F9', drawBorder: false },
+                        max: 2.8,
+                        grid: { color: 'rgba(241, 245, 249, 0.8)', drawBorder: false },
                         ticks: {
-                            font: { family: 'Plus Jakarta Sans', size: 10, weight: 'extrabold' },
-                            color: '#334155',
+                            font: { family: 'Plus Jakarta Sans', size: 10.5, weight: '600' },
+                            color: '#94A3B8',
                             stepSize: 0.5,
                             callback: function(value) {
                                 return value.toFixed(1).replace('.', ',');
@@ -172,34 +261,51 @@
                         title: {
                             display: true,
                             text: 'TOTAL SKOR KPI',
-                            font: { family: 'Plus Jakarta Sans', size: 10, weight: 'extrabold' },
-                            color: '#0F172A'
+                            font: { family: 'Plus Jakarta Sans', size: 10, weight: '800' },
+                            color: '#334155'
                         }
                     }
                 }
             }
         });
+
+        // Immediately filter to top cluster (BALI BARAT) on chart load
+        filterAnalisisChart();
     }
 
     function filterAnalisisChart() {
         if (!analisisChartInstance) return;
 
+        const defaultCluster = (analisisInitialDatasets && analisisInitialDatasets.length) ? analisisInitialDatasets[0].cluster : 'BALI BARAT';
         const selectedPeriode = document.getElementById('analisisFilterPeriode')?.value || 'all';
-        const selectedCluster = document.getElementById('analisisFilterCluster')?.value || 'all';
+        const selectedCluster = document.getElementById('analisisFilterCluster')?.value || defaultCluster;
 
+        // 1. Filter Cluster: Show specific cluster
         analisisChartInstance.data.datasets.forEach(ds => {
-            const pVal = ds.periode;
-            
-            if (selectedPeriode === 'all' || selectedPeriode === pVal) {
+            if (ds.cluster === selectedCluster) {
                 ds.hidden = false;
             } else {
                 ds.hidden = true;
             }
+        });
 
-            const clusterMap = analisisDataMapObj[selectedCluster] || analisisDataMapObj['all'];
-            if (clusterMap && clusterMap[pVal]) {
-                ds.data = clusterMap[pVal];
+        // 2. Filter Periode: Highlight selected periode point on X-axis if selected
+        const pIndex = analisisPeriodesList.indexOf(selectedPeriode);
+
+        analisisChartInstance.data.datasets.forEach(ds => {
+            const hex = ds.borderColor || '#ED1C24';
+            if (selectedPeriode !== 'all' && pIndex !== -1) {
+                ds.pointRadius = ds.data.map((_, idx) => (idx === pIndex ? 8 : 4));
+                ds.pointHoverRadius = ds.data.map((_, idx) => (idx === pIndex ? 11 : 7));
+                ds.pointBorderWidth = ds.data.map((_, idx) => (idx === pIndex ? 4 : 2.5));
+            } else {
+                ds.pointRadius = 5;
+                ds.pointHoverRadius = 9;
+                ds.pointBorderWidth = 2.5;
             }
+            ds.pointHitRadius = 35;
+            ds.pointBackgroundColor = '#FFFFFF';
+            ds.pointBorderColor = hex;
         });
 
         analisisChartInstance.update();
@@ -210,6 +316,7 @@
             setTimeout(initAnalisisChart, 100);
         }
     });
+
     function toggleKpiSbpMenu() {
         const submenu = document.getElementById('kpiSbpSubmenu');
         const arrow = document.getElementById('kpiSbpArrow');

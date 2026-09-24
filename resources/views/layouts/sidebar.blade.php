@@ -1,4 +1,25 @@
 <!-- LEFT SIDEBAR NAVIGATION (Dark #121212) -->
+<style>
+    /* Sleek Custom Dark Scrollbar for Sidebar */
+    #mainSidebar .sidebar-scroll-container::-webkit-scrollbar {
+        width: 4px;
+    }
+    #mainSidebar .sidebar-scroll-container::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    #mainSidebar .sidebar-scroll-container::-webkit-scrollbar-thumb {
+        background: #334155;
+        border-radius: 9999px;
+    }
+    #mainSidebar .sidebar-scroll-container::-webkit-scrollbar-thumb:hover {
+        background: #475569;
+    }
+    #mainSidebar .sidebar-scroll-container {
+        scrollbar-width: thin;
+        scrollbar-color: #334155 transparent;
+    }
+</style>
+
 <aside id="mainSidebar" class="w-60 bg-[#121212] text-gray-300 flex flex-col justify-between shrink-0 relative z-20 select-none border-r border-gray-800/80 transition-all duration-300 ease-in-out">
     
     <!-- Floating Red Circle Sidebar Toggle Button (Arrow) -->
@@ -10,7 +31,7 @@
     </button>
     
     <!-- Navigation Items Container -->
-    <div class="py-5 px-3.5 space-y-4 relative z-10 overflow-y-auto flex-1">
+    <div class="sidebar-scroll-container py-4 px-3 space-y-3 relative z-10 overflow-y-auto flex-1">
         
         <!-- Home Menu -->
         <a href="{{ route('dashboard') }}" 
@@ -25,11 +46,11 @@
                     onclick="toggleKpiSbpMenu()" 
                     class="w-full px-1 py-1 flex items-center justify-between text-[11px] sm:text-xs font-black text-[#ED1C24] uppercase tracking-wider hover:text-red-400 transition-all cursor-pointer group">
                 <span class="drop-shadow-[0_1px_2px_rgba(237,28,36,0.3)]">MONITORING KPI SBP</span>
-                <i id="kpiSbpArrow" class="bi bi-chevron-down text-xs text-gray-400 transition-transform duration-300 group-hover:text-red-400"></i>
+                <i id="kpiSbpArrow" class="bi bi-chevron-right text-xs text-gray-400 transition-transform duration-300 group-hover:text-red-400 {{ request()->routeIs(['regional-map.*', 'revenue.*', 'hierarchy.*', 'ranking.*', 'kelas-kpi.*']) ? 'rotate-90' : '' }}"></i>
             </button>
 
             <!-- Submenus for Monitoring KPI SBP -->
-            <div id="kpiSbpSubmenu" class="space-y-1 pt-1 pl-2 transition-all duration-300">
+            <div id="kpiSbpSubmenu" class="space-y-1 pt-1 pl-2 transition-all duration-300 {{ request()->routeIs(['regional-map.*', 'revenue.*', 'hierarchy.*', 'ranking.*', 'kelas-kpi.*']) ? '' : 'hidden' }}">
                 <!-- Submenu 1: Peta Regional -->
                 <a href="{{ route('regional-map.index') }}" 
                    class="sidebar-item flex items-center gap-3 px-3 py-2 text-xs sm:text-sm rounded-xl transition-all duration-200 group {{ request()->routeIs('regional-map.*') ? 'active bg-[#ED1C24] text-white font-extrabold shadow-lg shadow-red-600/30' : 'text-gray-300 hover:text-white hover:bg-white/10 font-semibold' }}">
@@ -73,7 +94,7 @@
                     onclick="toggleBudgetBkMenu()" 
                     class="w-full px-1 py-1 flex items-center justify-between text-[11px] sm:text-xs font-black text-[#ED1C24] uppercase tracking-wider hover:text-red-400 transition-all cursor-pointer group">
                 <span class="drop-shadow-[0_1px_2px_rgba(237,28,36,0.3)]">MONITORING BUDGET BK</span>
-                <i id="budgetBkArrow" class="bi bi-chevron-down text-xs text-gray-400 transition-transform duration-300 group-hover:text-red-400 {{ request()->routeIs('budget-bk.*') ? 'rotate-180' : '' }}"></i>
+                <i id="budgetBkArrow" class="bi bi-chevron-right text-xs text-gray-400 transition-transform duration-300 group-hover:text-red-400 {{ request()->routeIs('budget-bk.*') ? 'rotate-90' : '' }}"></i>
             </button>
 
             <!-- Submenus for Monitoring Budget BK -->
@@ -101,8 +122,19 @@
             </div>
         </div>
 
+        @if(Auth::user() && Auth::user()->isAdmin())
+            <!-- SYSTEM MAINTENANCE & PROTECTION MENU -->
+            <div class="pt-2 space-y-1 border-t border-gray-800/60">
+                <a href="{{ route('admin.backups.index') }}" 
+                   class="sidebar-item flex items-center gap-3 px-3 py-2 text-xs sm:text-sm rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.backups.*') ? 'active bg-[#ED1C24] text-white font-extrabold shadow-lg shadow-red-600/30' : 'text-gray-400 hover:text-white hover:bg-white/10 font-bold' }}">
+                    <i class="bi bi-shield-check text-base {{ request()->routeIs('admin.backups.*') ? 'text-white' : 'text-gray-400 group-hover:text-white' }} transition-colors"></i>
+                    <span>Backup & Restore Data</span>
+                </a>
+            </div>
+        @endif
+
         <!-- Logout Link Form -->
-        <div class="pt-6 border-t border-gray-800/80">
+        <div class="pt-4 border-t border-gray-800/80">
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
                 <button type="submit" 
@@ -175,9 +207,15 @@
             const submenu = document.getElementById('kpiSbpSubmenu');
             const arrow = document.getElementById('kpiSbpArrow');
             if (submenu) {
-                submenu.classList.toggle('hidden');
+                const isHidden = submenu.classList.toggle('hidden');
                 if (arrow) {
-                    arrow.classList.toggle('rotate-180');
+                    if (isHidden) {
+                        arrow.classList.remove('rotate-90');
+                        arrow.style.transform = '';
+                    } else {
+                        arrow.classList.add('rotate-90');
+                        arrow.style.transform = '';
+                    }
                 }
             }
         };
@@ -188,9 +226,15 @@
             const submenu = document.getElementById('budgetBkSubmenu');
             const arrow = document.getElementById('budgetBkArrow');
             if (submenu) {
-                submenu.classList.toggle('hidden');
+                const isHidden = submenu.classList.toggle('hidden');
                 if (arrow) {
-                    arrow.classList.toggle('rotate-180');
+                    if (isHidden) {
+                        arrow.classList.remove('rotate-90');
+                        arrow.style.transform = '';
+                    } else {
+                        arrow.classList.add('rotate-90');
+                        arrow.style.transform = '';
+                    }
                 }
             }
         };

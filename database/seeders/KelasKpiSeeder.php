@@ -380,9 +380,23 @@ class KelasKpiSeeder extends Seeder
             ],
         ];
 
-        foreach ($clusters as $c) {
-            $c['periode'] = '2026-08';
-            KelasKpi::create($c);
+        $periodes = ['2026-05', '2026-06', '2026-07', '2026-08'];
+        $scoreVariations = [
+            '2026-05' => -0.25,
+            '2026-06' => -0.10,
+            '2026-07' => 0.15,
+            '2026-08' => 0.0,
+        ];
+
+        foreach ($periodes as $p) {
+            foreach ($clusters as $c) {
+                unset($c['id']);
+                $c['periode'] = $p;
+                $var = $scoreVariations[$p] ?? 0;
+                $baseScore = (float) $c['final_score'];
+                $c['final_score'] = max(0.5, min(3.2, round($baseScore + $var, 2)));
+                KelasKpi::create($c);
+            }
         }
     }
 }

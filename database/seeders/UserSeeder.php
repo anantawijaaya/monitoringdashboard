@@ -58,18 +58,18 @@ class UserSeeder extends Seeder
         // 2. ROLE: VISITOR (12 Akun Terkunci Spesifik per Cluster)
         // -------------------------------------------------------------
         $clusterAccounts = [
-            ['email' => 'chanskyexo@gmail.com',            'name' => 'Admin Cluster Bali Barat',         'cluster' => 'BALI BARAT'],
-            ['email' => 'ayudewi20005@gmail.com',          'name' => 'Admin Cluster Bali Tengah',        'cluster' => 'BALI TENGAH'],
-            ['email' => 'rukirubiberdua@gmail.com',        'name' => 'Admin Cluster Bali Timur',         'cluster' => 'BALI TIMUR'],
-            ['email' => 'lombok.balinusra@gmail.com',      'name' => 'Admin Cluster Lombok',             'cluster' => 'LOMBOK'],
-            ['email' => 'sumbawa.balinusra@gmail.com',     'name' => 'Admin Cluster Sumbawa',            'cluster' => 'SUMBAWA'],
-            ['email' => 'sumbawatimur.balinusra@gmail.com','name' => 'Admin Cluster Sumbawa Timur',      'cluster' => 'SUMBAWA TIMUR'],
-            ['email' => 'kupangrote.balinusra@gmail.com',  'name' => 'Admin Cluster Kupang Rote',        'cluster' => 'KUPANG ROTE'],
-            ['email' => 'malakabelu.balinusra@gmail.com',  'name' => 'Admin Cluster Malaka Timtim Belu', 'cluster' => 'MALAKA TIMTIM BELU'],
-            ['email' => 'endesikka.balinusra@gmail.com',   'name' => 'Admin Cluster Ende Sikka',         'cluster' => 'ENDE SIKKA'],
-            ['email' => 'florestimur.balinusra@gmail.com', 'name' => 'Admin Cluster Flores Timur',       'cluster' => 'FLORES TIMUR'],
-            ['email' => 'manggarai.balinusra@gmail.com',   'name' => 'Admin Cluster Manggarai',          'cluster' => 'MANGGARAI'],
-            ['email' => 'sumba.balinusra@gmail.com',       'name' => 'Admin Cluster Sumba',              'cluster' => 'SUMBA'],
+            ['email' => 'sonyersania@gmail.com',             'name' => 'Admin Cluster Bali Barat',         'cluster' => 'BALI BARAT'],
+            ['email' => 'isdexan@gmail.com',                 'name' => 'Admin Cluster Bali Tengah',        'cluster' => 'BALI TENGAH'],
+            ['email' => 'ferdianbp@gmail.com',               'name' => 'Admin Cluster Bali Timur',         'cluster' => 'BALI TIMUR'],
+            ['email' => 'faiz.maulana67@gmail.com',          'name' => 'Admin Cluster Lombok',             'cluster' => 'LOMBOK'],
+            ['email' => 'idsadm.sbw@gmail.com',              'name' => 'Admin Cluster Sumbawa',            'cluster' => 'SUMBAWA'],
+            ['email' => 'didy.indriawan@gmail.com',          'name' => 'Admin Cluster Sumbawa Timur',      'cluster' => 'SUMBAWA TIMUR'],
+            ['email' => 'erfandhy22@gmail.com',              'name' => 'Admin Cluster Kupang Rote',        'cluster' => 'KUPANG ROTE'],
+            ['email' => 'junsilvester2@gmail.com',           'name' => 'Admin Cluster Malaka Timtim Belu', 'cluster' => 'MALAKA TIMTIM BELU'],
+            ['email' => 'nokinubi@gmail.com',                'name' => 'Admin Cluster Ende Sikka',         'cluster' => 'ENDE SIKKA'],
+            ['email' => 'florestimur@gmail.com',             'name' => 'Admin Cluster Flores Timur',       'cluster' => 'FLORES TIMUR'],
+            ['email' => 'manggarai.admin@gmail.com',         'name' => 'Admin Cluster Manggarai',          'cluster' => 'MANGGARAI'],
+            ['email' => 'sumba.admin@gmail.com',             'name' => 'Admin Cluster Sumba',              'cluster' => 'SUMBA'],
         ];
 
         foreach ($clusterAccounts as $acc) {

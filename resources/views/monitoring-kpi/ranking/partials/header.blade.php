@@ -30,21 +30,15 @@
 </div>
 
 @if(session('success'))
-    <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-2xl p-4 flex items-center justify-between shadow-sm">
-        <div class="flex items-center gap-2">
-            <i class="bi bi-check-circle-fill text-emerald-500 text-base"></i>
-            <span class="font-bold">{{ session('success') }}</span>
-        </div>
-        <button onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700 font-bold text-sm cursor-pointer">&times;</button>
+    <div class="py-2 px-1 text-emerald-700 text-xs font-bold flex items-center justify-between">
+        <span>{{ session('success') }}</span>
+        <button onclick="this.parentElement.remove()" class="text-emerald-600 hover:text-emerald-900 font-bold text-sm cursor-pointer">&times;</button>
     </div>
 @endif
 
 @if(session('error'))
-    <div class="bg-red-50 border border-red-200 text-red-800 text-xs rounded-2xl p-4 flex items-center justify-between shadow-sm">
-        <div class="flex items-center gap-2">
-            <i class="bi bi-exclamation-triangle-fill text-red-500 text-base"></i>
-            <span class="font-bold">{{ session('error') }}</span>
-        </div>
-        <button onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 font-bold text-sm cursor-pointer">&times;</button>
+    <div class="py-2 px-1 text-red-700 text-xs font-bold flex items-center justify-between">
+        <span>{{ session('error') }}</span>
+        <button onclick="this.parentElement.remove()" class="text-red-600 hover:text-red-900 font-bold text-sm cursor-pointer">&times;</button>
     </div>
 @endif

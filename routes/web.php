@@ -12,6 +12,7 @@ use App\Http\Controllers\KelasKpiController;
 use App\Http\Controllers\BudgetBK\IndirectChannelController;
 use App\Http\Controllers\BudgetBK\DirectSalesController;
 use App\Http\Controllers\BudgetBK\CultureProgramController;
+use App\Http\Controllers\BackupController;
 
 // Direct root route to Welcome page
 Route::get('/', function () {
@@ -117,6 +118,13 @@ Route::middleware('auth')->group(function () {
 
         Route::post('/growth-revenue/import', [DashboardController::class, 'importGrowthData'])->name('growth.import');
         Route::post('/growth-revenue/reset', [DashboardController::class, 'resetGrowthData'])->name('growth.reset');
+
+        // Backup & Restore Routes (Admin Only)
+        Route::get('/admin/backups', [BackupController::class, 'index'])->name('admin.backups.index');
+        Route::post('/admin/backups/create', [BackupController::class, 'create'])->name('admin.backups.create');
+        Route::get('/admin/backups/download/{fileName}', [BackupController::class, 'download'])->name('admin.backups.download');
+        Route::post('/admin/backups/restore', [BackupController::class, 'restore'])->name('admin.backups.restore');
+        Route::delete('/admin/backups/{fileName}', [BackupController::class, 'destroy'])->name('admin.backups.destroy');
     });
 });
 
