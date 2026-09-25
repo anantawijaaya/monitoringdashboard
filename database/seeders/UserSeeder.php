@@ -54,6 +54,17 @@ class UserSeeder extends Seeder
             ]
         );
 
+         User::updateOrCreate(
+            ['email' => 'bmksp2021@gmail.com'],
+            [
+                'name' => 'Gung Indra',  
+                'password' => Hash::make('bmksp2021@gmail.com'),
+                'role' => 'admin',
+                'cluster_name' => null,
+            ]
+        );
+
+
         // -------------------------------------------------------------
         // 2. ROLE: VISITOR (12 Akun Terkunci Spesifik per Cluster)
         // -------------------------------------------------------------
