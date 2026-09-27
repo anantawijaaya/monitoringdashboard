@@ -64,25 +64,6 @@ class UserSeeder extends Seeder
             ]
         );
 
-         User::updateOrCreate(
-            ['email' => 'cistadewii@gmail.com'],
-            [
-                'name' => 'MPRUY',  
-                'password' => Hash::make('cistadewii@gmail.com'),
-                'role' => 'admin',
-                'cluster_name' => null,
-            ]
-        );
-        User::updateOrCreate(
-            ['email' => 'nvalaz2504@gmail.com'],
-            [
-                'name' => 'MPRUY 2',  
-                'password' => Hash::make('navalaz2504@gmail.com'),
-                'role' => 'admin',
-                'cluster_name' => null,
-            ]
-        );
-
 
     
 
