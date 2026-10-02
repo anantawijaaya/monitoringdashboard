@@ -163,7 +163,7 @@ class IndirectChannelController extends Controller
             ->where('mitra', '!=', 'All Mitra')
             ->pluck('mitra', 'cluster')
             ->toArray();
-        $clusterMitraMap = array_merge($defaultMitraMap, $dbMitraMap);
+        $clusterMitraMap = array_merge($dbMitraMap, $defaultMitraMap);
 
         return view('budget-bk.indirect-channel.index', compact(
             'clusterMap',
