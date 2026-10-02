@@ -351,7 +351,7 @@ class HierarchyImportService
             $rowsToInsert[] = [
                 'kabupaten' => $kabupaten,
                 'cluster' => $cluster,
-                'mitra' => $mitra ?: 'PT AKAR DAYA',
+                'mitra' => $mitra ?: 'PT. CAHAYA GEMILANG CELLULAR',
                 'branch' => $branch,
                 'jumlah_outlet' => $formattedJumlah ?: '1.000',
                 'manager_branch' => $manager,

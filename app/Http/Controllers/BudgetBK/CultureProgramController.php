@@ -104,19 +104,19 @@ class CultureProgramController extends Controller
         );
 
         $defaultMitraMap = [
-            'BALI BARAT' => 'PT AKAR DAYA',
-            'BALI TENGAH' => 'PT. CATALIST INTEGRA PRIMA SUKSES',
-            'BALI TIMUR' => 'PT AKAR DAYA',
-            'ENDE SIKKA' => 'CV. RAJAWALI CELLULAR',
-            'FLORES TIMUR' => 'CV. RAJAWALI CELLULAR',
-            'MANGGARAI' => 'CV. RAJAWALI CELLULAR',
-            'KUPANG ROTE' => 'PT. NARINDO SOLUSI TELEKOMUNIKASI',
+            'BALI BARAT' => 'PT. CAHAYA GEMILANG CELLULAR',
+            'BALI TENGAH' => 'PT. SOLUSINDO KREASI JAYATECH',
+            'BALI TIMUR' => 'PT. CAHAYA GEMILANG CELLULAR',
+            'ENDE SIKKA' => 'CV. RAJAWALI CELLULAR INDONESIA',
+            'FLORES TIMUR' => 'CV. RAJAWALI CELLULAR INDONESIA',
+            'MANGGARAI' => 'CV. RAJAWALI CELLULAR INDONESIA',
+            'KUPANG ROTE' => 'PT. KINARYA SELARAS SOLUSI',
             'MALAKA TIMTIM B' => 'PT. NARINDO SOLUSI TELEKOMUNIKASI',
             'MALAKA TIMTIM BELU' => 'PT. NARINDO SOLUSI TELEKOMUNIKASI',
-            'SUMBA' => 'CV. RAJAWALI CELLULAR',
-            'LOMBOK' => 'PT AKAR DAYA',
-            'SUMBAWA BARAT' => 'BERKAH KARUNIA KREASI',
-            'SUMBAWA TIMUR' => 'PT KINARYA SELARAS SOLUSI',
+            'SUMBA' => 'CV. RAJAWALI CELLULAR INDONESIA',
+            'LOMBOK' => 'PT. AKAR DAYA',
+            'SUMBAWA BARAT' => 'PT. MITRA CIPTA TEKNOLOGI',
+            'SUMBAWA TIMUR' => 'PT. MITRA CIPTA TEKNOLOGI',
         ];
         $dbMitraMap = CultureProgramAllocation::whereNotNull('mitra')
             ->where('mitra', '!=', '')

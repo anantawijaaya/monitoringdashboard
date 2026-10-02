@@ -20,7 +20,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'JEMBRANA',
                 'cluster' => 'BALI BARAT',
-                'mitra' => 'PT AKAR DAYA',
+                'mitra' => 'PT. CAHAYA GEMILANG CELLULAR',
                 'branch' => 'DENPASAR',
                 'jumlah_outlet' => '1.139',
                 'manager_branch' => 'Herbianto',
@@ -30,7 +30,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'TABANAN',
                 'cluster' => 'BALI BARAT',
-                'mitra' => 'PT AKAR DAYA',
+                'mitra' => 'PT. CAHAYA GEMILANG CELLULAR',
                 'branch' => 'DENPASAR',
                 'jumlah_outlet' => '1.139',
                 'manager_branch' => 'Herbianto',
@@ -40,7 +40,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'BULELENG',
                 'cluster' => 'BALI BARAT',
-                'mitra' => 'PT AKAR DAYA',
+                'mitra' => 'PT. CAHAYA GEMILANG CELLULAR',
                 'branch' => 'DENPASAR',
                 'jumlah_outlet' => '1.139',
                 'manager_branch' => 'Herbianto',
@@ -52,7 +52,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'BADUNG',
                 'cluster' => 'BALI TENGAH',
-                'mitra' => 'PT. CATALIST INTEGRA PRIMA SUKSES',
+                'mitra' => 'PT. SOLUSINDO KREASI JAYATECH',
                 'branch' => 'DENPASAR',
                 'jumlah_outlet' => '1.690',
                 'manager_branch' => 'Herbianto',
@@ -62,7 +62,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'KOTA DENPASAR',
                 'cluster' => 'BALI TENGAH',
-                'mitra' => 'PT. CATALIST INTEGRA PRIMA SUKSES',
+                'mitra' => 'PT. SOLUSINDO KREASI JAYATECH',
                 'branch' => 'DENPASAR',
                 'jumlah_outlet' => '1.690',
                 'manager_branch' => 'Herbianto',
@@ -74,7 +74,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'GIANYAR',
                 'cluster' => 'BALI TIMUR',
-                'mitra' => 'PT AKAR DAYA',
+                'mitra' => 'PT. CAHAYA GEMILANG CELLULAR',
                 'branch' => 'DENPASAR',
                 'jumlah_outlet' => '1.322',
                 'manager_branch' => 'Herbianto',
@@ -84,7 +84,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'KLUNGKUNG',
                 'cluster' => 'BALI TIMUR',
-                'mitra' => 'PT AKAR DAYA',
+                'mitra' => 'PT. CAHAYA GEMILANG CELLULAR',
                 'branch' => 'DENPASAR',
                 'jumlah_outlet' => '1.322',
                 'manager_branch' => 'Herbianto',
@@ -94,7 +94,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'BANGLI',
                 'cluster' => 'BALI TIMUR',
-                'mitra' => 'PT AKAR DAYA',
+                'mitra' => 'PT. CAHAYA GEMILANG CELLULAR',
                 'branch' => 'DENPASAR',
                 'jumlah_outlet' => '1.322',
                 'manager_branch' => 'Herbianto',
@@ -104,7 +104,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'KARANG ASEM',
                 'cluster' => 'BALI TIMUR',
-                'mitra' => 'PT AKAR DAYA',
+                'mitra' => 'PT. CAHAYA GEMILANG CELLULAR',
                 'branch' => 'DENPASAR',
                 'jumlah_outlet' => '1.322',
                 'manager_branch' => 'Herbianto',
@@ -116,7 +116,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'SIKKA',
                 'cluster' => 'ENDE SIKKA',
-                'mitra' => 'CV. RAJAWALI CELLULAR',
+                'mitra' => 'CV. RAJAWALI CELLULAR INDONESIA',
                 'branch' => 'FLORES',
                 'jumlah_outlet' => '954',
                 'manager_branch' => 'Waskitho Anjar Prabowo',
@@ -126,7 +126,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'ENDE',
                 'cluster' => 'ENDE SIKKA',
-                'mitra' => 'CV. RAJAWALI CELLULAR',
+                'mitra' => 'CV. RAJAWALI CELLULAR INDONESIA',
                 'branch' => 'FLORES',
                 'jumlah_outlet' => '954',
                 'manager_branch' => 'Waskitho Anjar Prabowo',
@@ -138,7 +138,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'ALOR',
                 'cluster' => 'FLORES TIMUR',
-                'mitra' => 'CV. RAJAWALI CELLULAR',
+                'mitra' => 'CV. RAJAWALI CELLULAR INDONESIA',
                 'branch' => 'FLORES',
                 'jumlah_outlet' => '1.053',
                 'manager_branch' => 'Waskitho Anjar Prabowo',
@@ -148,7 +148,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'LEMBATA',
                 'cluster' => 'FLORES TIMUR',
-                'mitra' => 'CV. RAJAWALI CELLULAR',
+                'mitra' => 'CV. RAJAWALI CELLULAR INDONESIA',
                 'branch' => 'FLORES',
                 'jumlah_outlet' => '1.053',
                 'manager_branch' => 'Waskitho Anjar Prabowo',
@@ -158,7 +158,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'FLORES TIMUR',
                 'cluster' => 'FLORES TIMUR',
-                'mitra' => 'CV. RAJAWALI CELLULAR',
+                'mitra' => 'CV. RAJAWALI CELLULAR INDONESIA',
                 'branch' => 'FLORES',
                 'jumlah_outlet' => '1.053',
                 'manager_branch' => 'Waskitho Anjar Prabowo',
@@ -170,7 +170,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'NGADA',
                 'cluster' => 'MANGGARAI',
-                'mitra' => 'CV. RAJAWALI CELLULAR',
+                'mitra' => 'CV. RAJAWALI CELLULAR INDONESIA',
                 'branch' => 'FLORES',
                 'jumlah_outlet' => '2.024',
                 'manager_branch' => 'Waskitho Anjar Prabowo',
@@ -180,7 +180,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'MANGGARAI',
                 'cluster' => 'MANGGARAI',
-                'mitra' => 'CV. RAJAWALI CELLULAR',
+                'mitra' => 'CV. RAJAWALI CELLULAR INDONESIA',
                 'branch' => 'FLORES',
                 'jumlah_outlet' => '2.024',
                 'manager_branch' => 'Waskitho Anjar Prabowo',
@@ -190,7 +190,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'MANGGARAI BARAT',
                 'cluster' => 'MANGGARAI',
-                'mitra' => 'CV. RAJAWALI CELLULAR',
+                'mitra' => 'CV. RAJAWALI CELLULAR INDONESIA',
                 'branch' => 'FLORES',
                 'jumlah_outlet' => '2.024',
                 'manager_branch' => 'Waskitho Anjar Prabowo',
@@ -200,7 +200,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'NAGEKEO',
                 'cluster' => 'MANGGARAI',
-                'mitra' => 'CV. RAJAWALI CELLULAR',
+                'mitra' => 'CV. RAJAWALI CELLULAR INDONESIA',
                 'branch' => 'FLORES',
                 'jumlah_outlet' => '2.024',
                 'manager_branch' => 'Waskitho Anjar Prabowo',
@@ -210,7 +210,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'MANGGARAI TIMUR',
                 'cluster' => 'MANGGARAI',
-                'mitra' => 'CV. RAJAWALI CELLULAR',
+                'mitra' => 'CV. RAJAWALI CELLULAR INDONESIA',
                 'branch' => 'FLORES',
                 'jumlah_outlet' => '2.024',
                 'manager_branch' => 'Waskitho Anjar Prabowo',
@@ -222,7 +222,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'KUPANG',
                 'cluster' => 'KUPANG ROTE',
-                'mitra' => 'PT. NARINDO SOLUSI TELEKOMUNIKASI',
+                'mitra' => 'PT. KINARYA SELARAS SOLUSI',
                 'branch' => 'KUPANG',
                 'jumlah_outlet' => '1.050',
                 'manager_branch' => 'Adhy Yanwar',
@@ -232,7 +232,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'ROTE NDAO',
                 'cluster' => 'KUPANG ROTE',
-                'mitra' => 'PT. NARINDO SOLUSI TELEKOMUNIKASI',
+                'mitra' => 'PT. KINARYA SELARAS SOLUSI',
                 'branch' => 'KUPANG',
                 'jumlah_outlet' => '1.050',
                 'manager_branch' => 'Adhy Yanwar',
@@ -242,7 +242,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'KOTA KUPANG',
                 'cluster' => 'KUPANG ROTE',
-                'mitra' => 'PT. NARINDO SOLUSI TELEKOMUNIKASI',
+                'mitra' => 'PT. KINARYA SELARAS SOLUSI',
                 'branch' => 'KUPANG',
                 'jumlah_outlet' => '1.050',
                 'manager_branch' => 'Adhy Yanwar',
@@ -296,7 +296,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'SUMBA BARAT',
                 'cluster' => 'SUMBA',
-                'mitra' => 'CV. RAJAWALI CELLULAR',
+                'mitra' => 'CV. RAJAWALI CELLULAR INDONESIA',
                 'branch' => 'KUPANG',
                 'jumlah_outlet' => '1.319',
                 'manager_branch' => 'Adhy Yanwar',
@@ -306,7 +306,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'SUMBA TIMUR',
                 'cluster' => 'SUMBA',
-                'mitra' => 'CV. RAJAWALI CELLULAR',
+                'mitra' => 'CV. RAJAWALI CELLULAR INDONESIA',
                 'branch' => 'KUPANG',
                 'jumlah_outlet' => '1.319',
                 'manager_branch' => 'Adhy Yanwar',
@@ -316,7 +316,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'SUMBA TENGAH',
                 'cluster' => 'SUMBA',
-                'mitra' => 'CV. RAJAWALI CELLULAR',
+                'mitra' => 'CV. RAJAWALI CELLULAR INDONESIA',
                 'branch' => 'KUPANG',
                 'jumlah_outlet' => '1.319',
                 'manager_branch' => 'Adhy Yanwar',
@@ -326,7 +326,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'SUMBA BARAT DAYA',
                 'cluster' => 'SUMBA',
-                'mitra' => 'CV. RAJAWALI CELLULAR',
+                'mitra' => 'CV. RAJAWALI CELLULAR INDONESIA',
                 'branch' => 'KUPANG',
                 'jumlah_outlet' => '1.319',
                 'manager_branch' => 'Adhy Yanwar',
@@ -336,7 +336,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'SABU RAIJUA',
                 'cluster' => 'SUMBA',
-                'mitra' => 'CV. RAJAWALI CELLULAR',
+                'mitra' => 'CV. RAJAWALI CELLULAR INDONESIA',
                 'branch' => 'KUPANG',
                 'jumlah_outlet' => '1.319',
                 'manager_branch' => 'Adhy Yanwar',
@@ -348,7 +348,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'LOMBOK BARAT',
                 'cluster' => 'LOMBOK',
-                'mitra' => 'PT AKAR DAYA',
+                'mitra' => 'PT. AKAR DAYA',
                 'branch' => 'MATARAM',
                 'jumlah_outlet' => '2.524',
                 'manager_branch' => 'Kurnia Budi Setiawan',
@@ -358,7 +358,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'LOMBOK TENGAH',
                 'cluster' => 'LOMBOK',
-                'mitra' => 'PT AKAR DAYA',
+                'mitra' => 'PT. AKAR DAYA',
                 'branch' => 'MATARAM',
                 'jumlah_outlet' => '2.524',
                 'manager_branch' => 'Kurnia Budi Setiawan',
@@ -368,7 +368,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'LOMBOK TIMUR',
                 'cluster' => 'LOMBOK',
-                'mitra' => 'PT AKAR DAYA',
+                'mitra' => 'PT. AKAR DAYA',
                 'branch' => 'MATARAM',
                 'jumlah_outlet' => '2.524',
                 'manager_branch' => 'Kurnia Budi Setiawan',
@@ -378,7 +378,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'LOMBOK UTARA',
                 'cluster' => 'LOMBOK',
-                'mitra' => 'PT AKAR DAYA',
+                'mitra' => 'PT. AKAR DAYA',
                 'branch' => 'MATARAM',
                 'jumlah_outlet' => '2.524',
                 'manager_branch' => 'Kurnia Budi Setiawan',
@@ -388,7 +388,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'KOTA MATARAM',
                 'cluster' => 'LOMBOK',
-                'mitra' => 'PT AKAR DAYA',
+                'mitra' => 'PT. AKAR DAYA',
                 'branch' => 'MATARAM',
                 'jumlah_outlet' => '2.524',
                 'manager_branch' => 'Kurnia Budi Setiawan',
@@ -400,7 +400,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'SUMBAWA',
                 'cluster' => 'SUMBAWA BARAT',
-                'mitra' => 'PT BERKAH KARUNIA KREASI',
+                'mitra' => 'PT. MITRA CIPTA TEKNOLOGI',
                 'branch' => 'MATARAM',
                 'jumlah_outlet' => '986',
                 'manager_branch' => 'Kurnia Budi Setiawan',
@@ -410,7 +410,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'SUMBAWA BARAT',
                 'cluster' => 'SUMBAWA BARAT',
-                'mitra' => 'PT BERKAH KARUNIA KREASI',
+                'mitra' => 'PT. MITRA CIPTA TEKNOLOGI',
                 'branch' => 'MATARAM',
                 'jumlah_outlet' => '986',
                 'manager_branch' => 'Kurnia Budi Setiawan',
@@ -422,7 +422,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'DOMPU',
                 'cluster' => 'SUMBAWA TIMUR',
-                'mitra' => 'PT KINARYA SELARAS SOLUSI',
+                'mitra' => 'PT. MITRA CIPTA TEKNOLOGI',
                 'branch' => 'MATARAM',
                 'jumlah_outlet' => '1.262',
                 'manager_branch' => 'Kurnia Budi Setiawan',
@@ -432,7 +432,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'BIMA',
                 'cluster' => 'SUMBAWA TIMUR',
-                'mitra' => 'PT KINARYA SELARAS SOLUSI',
+                'mitra' => 'PT. MITRA CIPTA TEKNOLOGI',
                 'branch' => 'MATARAM',
                 'jumlah_outlet' => '1.262',
                 'manager_branch' => 'Kurnia Budi Setiawan',
@@ -442,7 +442,7 @@ class HierarchyOutletSeeder extends Seeder
             [
                 'kabupaten' => 'KOTA BIMA',
                 'cluster' => 'SUMBAWA TIMUR',
-                'mitra' => 'PT KINARYA SELARAS SOLUSI',
+                'mitra' => 'PT. MITRA CIPTA TEKNOLOGI',
                 'branch' => 'MATARAM',
                 'jumlah_outlet' => '1.262',
                 'manager_branch' => 'Kurnia Budi Setiawan',

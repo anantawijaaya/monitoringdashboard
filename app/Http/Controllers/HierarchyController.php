@@ -221,17 +221,17 @@ class HierarchyController extends Controller
             ], ';');
 
             // Example Template Rows
-            fputcsv($handle, ['JEMBRANA', 'BALI BARAT', 'PT AKAR DAYA', 'DENPASAR', '1.139', 'Herbianto'], ';');
-            fputcsv($handle, ['BADUNG', 'BALI TENGAH', 'PT. CATALIST INTEGRA PRIMA SUKSES', 'DENPASAR', '1.690', 'Herbianto'], ';');
-            fputcsv($handle, ['GIANYAR', 'BALI TIMUR', 'PT AKAR DAYA', 'DENPASAR', '1.322', 'Herbianto'], ';');
-            fputcsv($handle, ['SIKKA', 'ENDE SIKKA', 'CV. RAJAWALI CELLULAR', 'FLORES', '954', 'Waskitho Anjar Prabowo'], ';');
-            fputcsv($handle, ['NGADA', 'MANGGARAI', 'CV. RAJAWALI CELLULAR', 'FLORES', '2.024', 'Waskitho Anjar Prabowo'], ';');
-            fputcsv($handle, ['KOTA KUPANG', 'KUPANG ROTE', 'PT. NARINDO SOLUSI TELEKOMUNIKASI', 'KUPANG', '1.050', 'Adhy Yanwar'], ';');
+            fputcsv($handle, ['JEMBRANA', 'BALI BARAT', 'PT. CAHAYA GEMILANG CELLULAR', 'DENPASAR', '1.139', 'Herbianto'], ';');
+            fputcsv($handle, ['BADUNG', 'BALI TENGAH', 'PT. SOLUSINDO KREASI JAYATECH', 'DENPASAR', '1.690', 'Herbianto'], ';');
+            fputcsv($handle, ['GIANYAR', 'BALI TIMUR', 'PT. CAHAYA GEMILANG CELLULAR', 'DENPASAR', '1.322', 'Herbianto'], ';');
+            fputcsv($handle, ['SIKKA', 'ENDE SIKKA', 'CV. RAJAWALI CELLULAR INDONESIA', 'FLORES', '954', 'Waskitho Anjar Prabowo'], ';');
+            fputcsv($handle, ['NGADA', 'MANGGARAI', 'CV. RAJAWALI CELLULAR INDONESIA', 'FLORES', '2.024', 'Waskitho Anjar Prabowo'], ';');
+            fputcsv($handle, ['KOTA KUPANG', 'KUPANG ROTE', 'PT. KINARYA SELARAS SOLUSI', 'KUPANG', '1.050', 'Adhy Yanwar'], ';');
             fputcsv($handle, ['BELU', 'MALAKA TIMTIM B', 'PT. NARINDO SOLUSI TELEKOMUNIKASI', 'KUPANG', '1.476', 'Adhy Yanwar'], ';');
-            fputcsv($handle, ['SUMBA BARAT', 'SUMBA', 'CV. RAJAWALI CELLULAR', 'KUPANG', '1.319', 'Adhy Yanwar'], ';');
-            fputcsv($handle, ['KOTA MATARAM', 'LOMBOK', 'PT AKAR DAYA', 'MATARAM', '2.524', 'Kurnia Budi Setiawan'], ';');
-            fputcsv($handle, ['SUMBAWA', 'SUMBAWA BARAT', 'PT BERKAH KARUNIA KREASI', 'MATARAM', '986', 'Kurnia Budi Setiawan'], ';');
-            fputcsv($handle, ['BIMA', 'SUMBAWA TIMUR', 'PT KINARYA SELARAS SOLUSI', 'MATARAM', '1.262', 'Kurnia Budi Setiawan'], ';');
+            fputcsv($handle, ['SUMBA BARAT', 'SUMBA', 'CV. RAJAWALI CELLULAR INDONESIA', 'KUPANG', '1.319', 'Adhy Yanwar'], ';');
+            fputcsv($handle, ['KOTA MATARAM', 'LOMBOK', 'PT. AKAR DAYA', 'MATARAM', '2.524', 'Kurnia Budi Setiawan'], ';');
+            fputcsv($handle, ['SUMBAWA', 'SUMBAWA BARAT', 'PT. MITRA CIPTA TEKNOLOGI', 'MATARAM', '986', 'Kurnia Budi Setiawan'], ';');
+            fputcsv($handle, ['BIMA', 'SUMBAWA TIMUR', 'PT. MITRA CIPTA TEKNOLOGI', 'MATARAM', '1.262', 'Kurnia Budi Setiawan'], ';');
 
             fclose($handle);
         };

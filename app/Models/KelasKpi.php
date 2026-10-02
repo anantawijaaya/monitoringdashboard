@@ -91,19 +91,19 @@ class KelasKpi extends Model
         }
 
         $c = strtoupper($this->cluster ?? $this->new_cluster ?? '');
-        if (str_contains($c, 'BALI BARAT')) return 'PT AKAR DAYA';
-        if (str_contains($c, 'BALI TENGAH')) return 'PT. CATALIST INTEGRA PRIMA SUKSES';
-        if (str_contains($c, 'BALI TIMUR')) return 'PT AKAR DAYA';
-        if (str_contains($c, 'ENDE')) return 'CV. RAJAWALI CELLULAR';
-        if (str_contains($c, 'FLORES')) return 'CV. RAJAWALI CELLULAR';
-        if (str_contains($c, 'KUPANG')) return 'PT. NARINDO SOLUSI TELEKOMUNIKASI';
+        if (str_contains($c, 'BALI BARAT')) return 'PT. CAHAYA GEMILANG CELLULAR';
+        if (str_contains($c, 'BALI TENGAH')) return 'PT. SOLUSINDO KREASI JAYATECH';
+        if (str_contains($c, 'BALI TIMUR')) return 'PT. CAHAYA GEMILANG CELLULAR';
+        if (str_contains($c, 'ENDE')) return 'CV. RAJAWALI CELLULAR INDONESIA';
+        if (str_contains($c, 'FLORES')) return 'CV. RAJAWALI CELLULAR INDONESIA';
+        if (str_contains($c, 'KUPANG')) return 'PT. KINARYA SELARAS SOLUSI';
         if (str_contains($c, 'MALAKA')) return 'PT. NARINDO SOLUSI TELEKOMUNIKASI';
-        if (str_contains($c, 'MANGGARAI')) return 'CV. RAJAWALI CELLULAR';
-        if (str_contains($c, 'SUMBAWA BARAT')) return 'PT BERKAH KARUNIA KREASI';
-        if (str_contains($c, 'SUMBAWA TIMUR')) return 'PT KINARYA SELARAS SOLUSI';
-        if (str_contains($c, 'SUMBAWA')) return 'PT BERKAH KARUNIA KREASI';
-        if (str_contains($c, 'SUMBA')) return 'CV. RAJAWALI CELLULAR';
-        if (str_contains($c, 'LOMBOK')) return 'PT AKAR DAYA';
+        if (str_contains($c, 'MANGGARAI')) return 'CV. RAJAWALI CELLULAR INDONESIA';
+        if (str_contains($c, 'SUMBAWA BARAT')) return 'PT. MITRA CIPTA TEKNOLOGI';
+        if (str_contains($c, 'SUMBAWA TIMUR')) return 'PT. MITRA CIPTA TEKNOLOGI';
+        if (str_contains($c, 'SUMBAWA')) return 'PT. MITRA CIPTA TEKNOLOGI';
+        if (str_contains($c, 'SUMBA')) return 'CV. RAJAWALI CELLULAR INDONESIA';
+        if (str_contains($c, 'LOMBOK')) return 'PT. AKAR DAYA';
 
         return 'TELKOMSEL REGIONAL BALI NUSRA';
     }
