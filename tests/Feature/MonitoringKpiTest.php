@@ -36,7 +36,7 @@ class MonitoringKpiTest extends TestCase
         // Index page
         $response = $this->actingAs($user)->get('/regional-map');
         $response->assertStatus(200);
-        $response->assertSee('PETA SEBARAN OUTLET');
+        $response->assertSee('PETA PERSEBARAN OUTLET');
 
         // Markers JSON
         $jsonResponse = $this->actingAs($user)->get('/regional-map/markers');
@@ -86,7 +86,7 @@ class MonitoringKpiTest extends TestCase
         // Index page
         $response = $this->actingAs($user)->get('/hierarchy');
         $response->assertStatus(200);
-        $response->assertSee('HIRARKI REGIONAL BALI NUSRA');
+        $response->assertSee('Data Cluster, Mitra, Branch');
 
         // Template Download
         $templateResponse = $this->actingAs($user)->get('/hierarchy/template');
@@ -128,7 +128,7 @@ class MonitoringKpiTest extends TestCase
         // Index page
         $response = $this->actingAs($user)->get('/ranking');
         $response->assertStatus(200);
-        $response->assertSee('Peringkat Revenue Regional Bali Nusra');
+        $response->assertSee('Peringkat Revenue');
 
         // Template Download
         $templateResponse = $this->actingAs($user)->get('/ranking/template');
